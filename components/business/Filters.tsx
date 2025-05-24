@@ -1,3 +1,4 @@
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import React, { useState } from "react";
@@ -36,6 +37,12 @@ export default function Filters({ visible, onClose }: FiltersProps) {
 
   const formattedMaxPrice = maxPrice === 10000 ? "10000+" : maxPrice;
 
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const text = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const border = useThemeColor({}, "border");
+
   return (
     <Modal
       animationType="slide"
@@ -44,48 +51,66 @@ export default function Filters({ visible, onClose }: FiltersProps) {
       onRequestClose={onClose}
     >
       <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay}>
+        <View style={[styles.overlay]}>
           <TouchableWithoutFeedback>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Filters</Text>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: background, shadowColor: border },
+              ]}
+            >
+              <Text style={[styles.modalTitle, { color: text }]}>Filters</Text>
 
-              <Text style={styles.filterLabel}>
+              <Text style={[styles.filterLabel, { color: text }]}>
                 Price Range:{" "}
-                <Text style={{ fontWeight: "600", color: "#5CB338" }}>
+                <Text style={{ fontWeight: "600", color: primary }}>
                   ₹{minPrice} - ₹{formattedMaxPrice}
                 </Text>
               </Text>
-              <Text style={styles.sliderLabel}>Min Price</Text>
+              <Text style={[styles.sliderLabel, { color: text }]}>
+                Min Price
+              </Text>
               <Slider
                 minimumValue={100}
                 maximumValue={10000}
                 value={minPrice}
                 step={100}
-                minimumTrackTintColor="#5CB338"
-                maximumTrackTintColor="#ccc"
+                minimumTrackTintColor={primary}
+                maximumTrackTintColor={text}
                 onValueChange={onMinPriceChange}
-                thumbTintColor="#5CB338"
+                thumbTintColor={primary}
               />
-              <Text style={styles.sliderLabel}>Max Price</Text>
+              <Text style={[styles.sliderLabel, { color: text }]}>
+                Max Price
+              </Text>
               <Slider
                 minimumValue={100}
                 maximumValue={10000}
                 value={maxPrice}
                 step={100}
-                minimumTrackTintColor="#5CB338"
-                maximumTrackTintColor="#ccc"
+                minimumTrackTintColor={primary}
+                maximumTrackTintColor={text}
                 onValueChange={onMaxPriceChange}
-                thumbTintColor="#5CB338"
+                thumbTintColor={primary}
               />
 
-              <Text style={[styles.filterLabel, { marginTop: 20 }]}>Mode</Text>
+              <Text
+                style={[styles.filterLabel, { marginTop: 20, color: text }]}
+              >
+                Mode
+              </Text>
               <View style={styles.optionsRow}>
                 {["remote", "onsite", "both"].map((item) => (
                   <Pressable
                     key={item}
                     style={[
                       styles.optionButton,
-                      mode === item && styles.optionSelected,
+                      { borderColor: border, backgroundColor: background },
+                      mode === item && {
+                        borderColor: primary,
+                        borderWidth: 1,
+                        backgroundColor: background,
+                      },
                     ]}
                     onPress={() => setMode(item as ModeType)}
                   >
@@ -93,7 +118,7 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                       <MaterialCommunityIcons
                         name="map-marker-outline"
                         size={16}
-                        color={mode === item ? "#5CB338" : "#555"}
+                        color={mode === item ? primary : text}
                       />
                     ) : (
                       <MaterialIcons
@@ -105,13 +130,17 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                             : "public"
                         }
                         size={16}
-                        color={mode === item ? "#5CB338" : "#555"}
+                        color={mode === item ? primary : text}
                       />
                     )}
                     <Text
                       style={[
                         styles.optionText,
-                        mode === item && styles.optionTextSelected,
+                        { color: text },
+                        mode === item && {
+                          ...styles.optionTextSelected,
+                          color: primary,
+                        },
                       ]}
                     >
                       {item.charAt(0).toUpperCase() + item.slice(1)}
@@ -120,26 +149,37 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                 ))}
               </View>
 
-              <Text style={styles.filterLabel}>Search Radius</Text>
+              <Text style={[styles.filterLabel, { color: text }]}>
+                Search Radius
+              </Text>
               <View style={styles.optionsRow}>
                 {["5km", "10km", "all"].map((item) => (
                   <Pressable
                     key={item}
                     style={[
                       styles.optionButton,
-                      radius === item && styles.optionSelected,
+                      { borderColor: border, backgroundColor: background },
+                      radius === item && {
+                        borderColor: primary,
+                        borderWidth: 1,
+                        backgroundColor: background,
+                      },
                     ]}
                     onPress={() => setRadius(item as RadiusType)}
                   >
                     <MaterialCommunityIcons
                       name="map-marker-outline"
                       size={15}
-                      color={radius === item ? "#5CB338" : "#000"}
+                      color={radius === item ? primary : text}
                     />
                     <Text
                       style={[
                         styles.optionText,
-                        radius === item && styles.optionTextSelected,
+                        { color: text },
+                        radius === item && {
+                          ...styles.optionTextSelected,
+                          color: primary,
+                        },
                       ]}
                     >
                       {item === "all" ? "All" : item}
@@ -148,14 +188,19 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                 ))}
               </View>
 
-              <Text style={styles.filterLabel}>Sort By</Text>
+              <Text style={[styles.filterLabel, { color: text }]}>Sort By</Text>
               <View style={styles.optionsRow}>
                 {["nearest", "price"].map((item) => (
                   <Pressable
                     key={item}
                     style={[
                       styles.optionButton,
-                      sort === item && styles.optionSelected,
+                      { borderColor: border, backgroundColor: background },
+                      sort === item && {
+                        borderColor: primary,
+                        borderWidth: 1,
+                        backgroundColor: background,
+                      },
                     ]}
                     onPress={() => setSort(item as SortType)}
                   >
@@ -163,24 +208,31 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                       <MaterialCommunityIcons
                         name="map-marker-outline"
                         size={15}
-                        color={sort === item ? "#5CB338" : "#000"}
+                        color={sort === item ? primary : text}
                       />
                     )}
                     <Text
                       style={[
                         styles.optionText,
-                        sort === item && styles.optionTextSelected,
+                        { color: text },
+                        sort === item && {
+                          ...styles.optionTextSelected,
+                          color: primary,
+                        },
                       ]}
                     >
-                      {item === "price" && "₹ "}{" "}
+                      {item === "price" && "₹ "}
                       {item.charAt(0).toUpperCase() + item.slice(1)}
                     </Text>
                   </Pressable>
                 ))}
               </View>
 
-              <Pressable style={styles.modalClose} onPress={onClose}>
-                <Text style={{ color: "#fff", fontWeight: "bold" }}>
+              <Pressable
+                style={[styles.modalClose, { backgroundColor: primary }]}
+                onPress={onClose}
+              >
+                <Text style={{ color: background, fontWeight: "bold" }}>
                   Apply Filters
                 </Text>
               </Pressable>
@@ -195,16 +247,13 @@ export default function Filters({ visible, onClose }: FiltersProps) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#fff",
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 12,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
@@ -213,26 +262,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     marginBottom: 16,
-    color: "#000",
   },
   priceRangeText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#5CB338",
   },
   filterLabel: {
     fontSize: 16,
     fontWeight: "500",
     marginTop: 16,
     marginBottom: 8,
-    color: "#000",
   },
   sliderLabel: {
     fontSize: 14,
     fontWeight: "400",
-    marginTop: 4,
+    marginTop: 8,
     marginBottom: 4,
-    color: "#000",
   },
   optionsRow: {
     flexDirection: "row",
@@ -247,26 +292,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
-    backgroundColor: "#fff",
     gap: 6,
   },
-  optionSelected: {
-    borderColor: "#5CB338",
-    backgroundColor: "#fff",
-  },
+
   optionText: {
     fontSize: 14,
-    color: "#000",
     fontWeight: "500",
   },
-  optionTextSelected: {
-    color: "#5CB338",
-  },
+  optionTextSelected: {},
   modalClose: {
     marginTop: 24,
-    backgroundColor: "#5CB338",
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",

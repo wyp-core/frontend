@@ -1,9 +1,9 @@
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Location from "expo-location";
 import React, { useState } from "react";
 import {
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -27,6 +27,12 @@ export default function AddJobForm() {
   const [location, setLocation] = useState("");
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const text = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const border = useThemeColor({}, "border");
 
   const handleUseCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -68,46 +74,69 @@ export default function AddJobForm() {
 
   return (
     <ScrollView
-      contentContainerStyle={styles.container}
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: background },
+      ]}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={styles.header}>
-        What's your <Text style={styles.headerHighlight}>price</Text> to
+      <Text style={[styles.header, { color: text }]}>
+        What's your{" "}
+        <Text style={[styles.headerHighlight, { color: primary }]}>price</Text>{" "}
+        to
       </Text>
-
       <TextInput
-        style={[styles.input, { marginBottom: 5 }]}
+        style={[
+          styles.input,
+          {
+            marginBottom: 5,
+            color: text,
+            backgroundColor: background,
+            borderColor: border,
+          },
+        ]}
         maxLength={50}
-        placeholder="Short description (e.g.,                                                                                                  do my taxes?)"
-        placeholderTextColor="#888"
+        placeholder="Short description (e.g., do my taxes?)"
+        placeholderTextColor={secondary}
         value={title}
         onChangeText={(text) => {
           setTitle(text);
           setErrors({ ...errors, title: "" });
         }}
       />
-      <Text style={styles.charCount}>{title.length}/50</Text>
+      <Text style={[styles.charCount, { color: secondary }]}>
+        {title.length}/50
+      </Text>
       {errors.title && <Text style={styles.error}>{errors.title}</Text>}
-
       <TextInput
-        style={[styles.input, styles.multilineInput, { marginBottom: 5 }]}
+        style={[
+          styles.input,
+          styles.multilineInput,
+          {
+            marginBottom: 5,
+            color: text,
+            backgroundColor: background,
+            borderColor: border,
+          },
+        ]}
         multiline
         maxLength={500}
         placeholder="Describe what needs to be done"
-        placeholderTextColor="#888"
+        placeholderTextColor={secondary}
         value={description}
         onChangeText={(text) => {
           setDescription(text);
           setErrors({ ...errors, description: "" });
         }}
       />
-      <Text style={styles.charCount}>{description.length}/500</Text>
+      <Text style={[styles.charCount, { color: secondary }]}>
+        {description.length}/500
+      </Text>
       {errors.description && (
         <Text style={styles.error}>{errors.description}</Text>
       )}
-
       <View style={styles.row}>
-        <Text style={[styles.label, { fontWeight: "600" }]}>
+        <Text style={[styles.label, { fontWeight: "600", color: text }]}>
           Is there a deadline?
         </Text>
         <Switch
@@ -119,19 +148,22 @@ export default function AddJobForm() {
               setErrors({ ...errors, deadline: "" });
             }
           }}
-          trackColor={{ true: "#5CB338", false: "#ccc" }}
-          thumbColor="#fff"
+          trackColor={{ true: primary, false: border }}
+          thumbColor={background}
         />
       </View>
-
       {hasDeadline && (
         <>
           <Pressable
             onPress={() => setShowDatePicker(true)}
-            style={styles.datePickerButton}
+            style={[
+              styles.datePickerButton,
+              { borderColor: border, backgroundColor: background },
+            ]}
           >
-            <MaterialIcons name="calendar-today" size={18} color="#5CB338" />
-            <Text style={styles.dateText}>
+            <MaterialIcons name="calendar-today" size={18} color={primary} />
+            <Text style={[styles.dateText, { color: primary }]}>
+              {" "}
               {deadline
                 ? deadline.toLocaleDateString() +
                   " " +
@@ -149,21 +181,24 @@ export default function AddJobForm() {
             <DateTimePicker
               value={deadline || new Date()}
               mode="datetime"
-              display={Platform.OS === "ios" ? "inline" : "default"}
+              display={"default"}
               onChange={handleDateChange}
               minimumDate={new Date()}
             />
           )}
         </>
       )}
-
       <View style={styles.optionsRow}>
         {["remote", "onsite", "both"].map((item) => (
           <Pressable
             key={item}
             style={[
               styles.optionButton,
-              mode === item && styles.optionSelected,
+              { borderColor: border, backgroundColor: background },
+              mode === item && {
+                borderColor: primary,
+                backgroundColor: background,
+              },
             ]}
             onPress={() => setMode(item as ModeType)}
           >
@@ -171,7 +206,7 @@ export default function AddJobForm() {
               <MaterialCommunityIcons
                 name="map-marker-outline"
                 size={16}
-                color={mode === item ? "#5CB338" : "#555"}
+                color={mode === item ? primary : text}
               />
             ) : (
               <MaterialIcons
@@ -183,14 +218,14 @@ export default function AddJobForm() {
                     : "public"
                 }
                 size={16}
-                color={mode === item ? "#5CB338" : "#555"}
+                color={mode === item ? primary : text}
               />
             )}
-
             <Text
               style={[
                 styles.optionText,
-                mode === item && styles.optionTextSelected,
+                { color: text },
+                mode === item && { color: primary },
               ]}
             >
               {item.charAt(0).toUpperCase() + item.slice(1)}
@@ -198,27 +233,36 @@ export default function AddJobForm() {
           </Pressable>
         ))}
       </View>
-
       <View style={styles.budgetRow}>
         <TextInput
-          style={[styles.input, { flex: 1 }]}
+          style={[
+            styles.input,
+            {
+              flex: 1,
+              color: text,
+              backgroundColor: background,
+              borderColor: border,
+            },
+          ]}
           keyboardType="numeric"
           placeholder="Estimated budget (e.g., 5000)"
-          placeholderTextColor="#888"
+          placeholderTextColor={secondary}
           value={budget}
           onChangeText={(text) => {
             setBudget(text);
             setErrors({ ...errors, budget: "" });
           }}
         />
-        <Text style={styles.inr}>INR</Text>
+        <Text style={[styles.inr, { color: primary }]}>INR</Text>
       </View>
       {errors.budget && <Text style={styles.error}>{errors.budget}</Text>}
-
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          { color: text, backgroundColor: background, borderColor: border },
+        ]}
         placeholder="Estimated duration (e.g., 2 weeks)"
-        placeholderTextColor="#888"
+        placeholderTextColor={secondary}
         value={duration}
         onChangeText={(text) => {
           setDuration(text);
@@ -226,11 +270,13 @@ export default function AddJobForm() {
         }}
       />
       {errors.duration && <Text style={styles.error}>{errors.duration}</Text>}
-
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          { color: text, backgroundColor: background, borderColor: border },
+        ]}
         placeholder="Location or use current location"
-        placeholderTextColor="#888"
+        placeholderTextColor={secondary}
         value={location}
         onChangeText={(text) => {
           setLocation(text);
@@ -238,7 +284,6 @@ export default function AddJobForm() {
         }}
       />
       {errors.location && <Text style={styles.error}>{errors.location}</Text>}
-
       <Pressable
         onPress={handleUseCurrentLocation}
         style={styles.locationButton}
@@ -246,13 +291,24 @@ export default function AddJobForm() {
         <MaterialCommunityIcons
           name="navigation-variant-outline"
           size={20}
-          color="#5CB338"
+          color={primary}
         />
-        <Text style={styles.useLocationText}>Use Current Location</Text>
+        <Text style={[styles.useLocationText, { color: primary }]}>
+          Use Current Location
+        </Text>
       </Pressable>
-
-      <Pressable style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitText}>Post Job</Text>
+      <Pressable
+        style={[styles.submitButton, { backgroundColor: primary }]}
+        onPress={handleSubmit}
+      >
+        <Text
+          style={[
+            styles.submitText,
+            { color: background === "#1b1b1b" ? "#111" : "#fff" },
+          ]}
+        >
+          Post Job
+        </Text>
       </Pressable>
     </ScrollView>
   );
@@ -267,19 +323,13 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "800",
     marginBottom: 12,
-    color: "#000",
   },
-  headerHighlight: {
-    color: "#5CB338",
-  },
+  headerHighlight: {},
   input: {
     borderWidth: 1,
-    borderColor: "#e0e0e0",
     borderRadius: 8,
     padding: 14,
     fontSize: 15,
-    color: "#000",
-    backgroundColor: "#fefefe",
     marginBottom: 12,
   },
   multilineInput: {
@@ -288,7 +338,6 @@ const styles = StyleSheet.create({
   },
   charCount: {
     fontSize: 12,
-    color: "#888",
     textAlign: "right",
     marginBottom: 16,
   },
@@ -307,7 +356,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#000",
   },
   datePickerButton: {
     flexDirection: "row",
@@ -318,11 +366,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    backgroundColor: "#fff",
   },
   dateText: {
-    color: "#5CB338",
     fontWeight: "600",
     fontSize: 14,
   },
@@ -339,23 +384,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 6,
-    backgroundColor: "#fff",
     gap: 8,
   },
-  optionSelected: {
-    borderColor: "#5CB338",
-    backgroundColor: "#eaf8e8",
-  },
+  optionSelected: {},
   optionText: {
     fontSize: 14,
-    color: "#555",
     fontWeight: "600",
   },
-  optionTextSelected: {
-    color: "#5CB338",
-  },
+  optionTextSelected: {},
   budgetRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -365,7 +402,6 @@ const styles = StyleSheet.create({
   inr: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#5CB338",
   },
   locationButton: {
     flexDirection: "row",
@@ -375,13 +411,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   useLocationText: {
-    color: "#5CB338",
     fontSize: 15,
     fontWeight: "600",
   },
   submitButton: {
     marginTop: 12,
-    backgroundColor: "#5CB338",
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
@@ -392,7 +426,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   submitText: {
-    color: "#fff",
+    color: "#fff", // Will be overridden inline with theme color
     fontWeight: "700",
     fontSize: 17,
   },

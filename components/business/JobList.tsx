@@ -1,3 +1,4 @@
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { ScrollView, StyleSheet } from "react-native";
 import JobCard from "./JobCard";
 
@@ -38,6 +39,7 @@ const jobs = [
 ];
 
 export default function JobList() {
+  const text = useThemeColor({}, "text");
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {jobs.map((job, index) => (
@@ -55,6 +57,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     margin: 16,
-    color: "#111",
   },
 });

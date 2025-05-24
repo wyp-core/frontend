@@ -5,10 +5,14 @@ import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const background = useThemeColor({}, "background");
 
   return (
     <Tabs
@@ -16,17 +20,20 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
-        tabBarActiveTintColor: "#5CB338",
-        tabBarInactiveTintColor: "#A0A0A0",
+        tabBarActiveTintColor: primary,
+        tabBarInactiveTintColor: secondary,
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: "600",
         },
         tabBarStyle: Platform.select({
           android: {
-            backgroundColor: "white",
+            backgroundColor: background,
             borderTopWidth: 0,
             elevation: 6,
+          },
+          default: {
+            backgroundColor: background,
           },
         }),
       }}

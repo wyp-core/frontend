@@ -3,9 +3,13 @@ import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { useLocation } from "@/context/LocationContext";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import Geolocation from "./Geolocation";
 
 const LocationHeader: React.FC = () => {
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const text = useThemeColor({}, "text");
   const [modalVisible, setModalVisible] = useState(false);
   const { address } = useLocation();
 
@@ -15,11 +19,15 @@ const LocationHeader: React.FC = () => {
         style={styles.locationBox}
         onPress={() => setModalVisible(true)}
       >
-        <MaterialIcons name="location-on" size={18} color="#5CB338" />
-        <Text style={styles.locationText} numberOfLines={1}>
+        <MaterialIcons name="location-on" size={18} color={primary} />
+        <Text style={[styles.locationText, { color: text }]} numberOfLines={1}>
           {address}
         </Text>
-        <MaterialCommunityIcons name="chevron-down" size={24} color="#888" />
+        <MaterialCommunityIcons
+          name="chevron-down"
+          size={24}
+          color={secondary}
+        />
       </TouchableOpacity>
 
       <Geolocation

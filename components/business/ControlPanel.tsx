@@ -1,3 +1,4 @@
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -15,6 +16,12 @@ export default function ControlPanel() {
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const animatedValue = useRef(new Animated.Value(0)).current;
+
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const text = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const border = useThemeColor({}, "border");
 
   const examples = [
     "online math tutor",
@@ -34,12 +41,12 @@ export default function ControlPanel() {
   useEffect(() => {
     const interval = setInterval(() => {
       Animated.timing(animatedValue, {
-        toValue: -20, // move current word up
+        toValue: -20,
         duration: 200,
         useNativeDriver: true,
       }).start(() => {
         setPlaceholderIndex((prev) => (prev + 1) % examples.length);
-        animatedValue.setValue(20); // move next word below
+        animatedValue.setValue(20);
         Animated.timing(animatedValue, {
           toValue: 0,
           duration: 200,
@@ -54,23 +61,26 @@ export default function ControlPanel() {
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <View style={styles.searchWrapper}>
+        <View style={[styles.searchWrapper, { borderColor: border }]}>
           <View style={styles.searchBox}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: text }]}
               placeholder=""
-              placeholderTextColor="#888"
+              placeholderTextColor={secondary}
               value={search}
               onChangeText={setSearch}
             />
             {search === "" && (
               <View style={styles.placeholderContainer}>
-                <Text style={styles.placeholderStatic}>Search for </Text>
+                <Text style={[styles.placeholderStatic, { color: secondary }]}>
+                  Search for{" "}
+                </Text>
                 <View style={styles.animatedTextWrapper}>
                   <Animated.Text
                     style={[
                       styles.placeholderAnimated,
                       {
+                        color: secondary,
                         transform: [{ translateY: animatedValue }],
                       },
                     ]}
@@ -80,15 +90,15 @@ export default function ControlPanel() {
                 </View>
               </View>
             )}
-            <MaterialIcons name="search" size={20} color="#5CB338" />
+            <MaterialIcons name="search" size={20} color={primary} />
           </View>
         </View>
 
         <TouchableOpacity
-          style={styles.filterButton}
+          style={[styles.filterButton, { borderColor: border }]}
           onPress={() => setFilterModalVisible(true)}
         >
-          <MaterialIcons name="tune" size={20} color="#5CB338" />
+          <MaterialIcons name="tune" size={20} color={primary} />
         </TouchableOpacity>
       </View>
 
@@ -111,9 +121,7 @@ const styles = StyleSheet.create({
   },
   searchWrapper: {
     flex: 1,
-    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 2,
@@ -127,7 +135,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
-    color: "#000",
     paddingVertical: 8,
     marginRight: 8,
   },
@@ -139,7 +146,6 @@ const styles = StyleSheet.create({
   },
   placeholderStatic: {
     fontSize: 14,
-    color: "#888",
   },
   animatedTextWrapper: {
     height: 20,
@@ -147,17 +153,14 @@ const styles = StyleSheet.create({
   },
   placeholderAnimated: {
     fontSize: 14,
-    color: "#888",
     fontStyle: "italic",
   },
   filterButton: {
     marginLeft: 8,
-    backgroundColor: "#fff",
     padding: 8,
     borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#eee",
   },
 });

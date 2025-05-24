@@ -1,5 +1,6 @@
 import { haversineDistance } from "@/constants/Utils";
 import { useLocation } from "@/context/LocationContext";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
@@ -29,6 +30,12 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
   const [predictions, setPredictions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const { coords, updateLocation, setSelectedPlace } = useLocation();
+
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const border = useThemeColor({}, "border");
+  const secondary = useThemeColor({}, "secondary");
 
   useEffect(() => {
     if (query.length > 2) {
@@ -116,53 +123,58 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
         style={{ flex: 1 }}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.overlay}>
+          <View style={[styles.overlay, { backgroundColor: background }]}>
             <View style={styles.header}>
               <TouchableOpacity onPress={handleClose}>
                 <MaterialCommunityIcons
                   name="chevron-down"
                   size={18}
-                  color="#000"
+                  color={text}
                 />
               </TouchableOpacity>
-              <Text style={styles.headerText}>Choose your location</Text>
+              <Text style={[styles.headerText, { color: text }]}>
+                Choose your location
+              </Text>
             </View>
 
-            <View style={styles.searchContainer}>
+            <View style={[styles.searchContainer, { borderColor: border }]}>
               <MaterialIcons
                 name="search"
                 size={18}
-                color="#5CB338"
+                color={primary}
                 style={styles.searchIcon}
               />
 
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: text }]}
                 value={query}
                 onChangeText={setQuery}
                 placeholder="Search for a place"
-                placeholderTextColor="#999"
+                placeholderTextColor={secondary}
               />
             </View>
 
             <TouchableOpacity
-              style={styles.currentLocationButton}
+              style={[
+                styles.currentLocationButton,
+                { borderColor: border, backgroundColor: background },
+              ]}
               onPress={handleUseCurrentLocation}
             >
               <MaterialIcons
                 name="my-location"
                 size={18}
-                color="#5CB338"
+                color={primary}
                 style={{ marginRight: 8 }}
               />
 
-              <Text style={styles.currentLocationText}>
+              <Text style={[styles.currentLocationText, { color: primary }]}>
                 Use current location
               </Text>
             </TouchableOpacity>
 
             {loading ? (
-              <ActivityIndicator style={{ marginTop: 20 }} />
+              <ActivityIndicator style={{ marginTop: 20 }} color={primary} />
             ) : (
               <FlatList
                 data={predictions}
@@ -178,21 +190,25 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
                         <MaterialIcons
                           name="location-on"
                           size={16}
-                          color="#ccc"
+                          color={border}
                         />
                         {item.distance && (
-                          <Text style={styles.distanceText}>
+                          <Text
+                            style={[styles.distanceText, { color: secondary }]}
+                          >
                             {Math.round(item.distance)} km
                           </Text>
                         )}
                       </View>
 
                       <View style={styles.textContainer}>
-                        <Text style={styles.primaryText}>
+                        <Text style={[styles.primaryText, { color: text }]}>
                           {item.structured_formatting?.main_text ||
                             item.description}
                         </Text>
-                        <Text style={styles.secondaryText}>
+                        <Text
+                          style={[styles.secondaryText, { color: secondary }]}
+                        >
                           {item.structured_formatting?.secondary_text || ""}
                         </Text>
                       </View>
@@ -211,7 +227,6 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "#fff",
     paddingTop: 15,
     paddingHorizontal: 16,
   },
@@ -229,7 +244,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
@@ -248,14 +262,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#fff",
     borderRadius: 8,
     marginBottom: 12,
   },
   currentLocationText: {
     fontSize: 16,
-    color: "#5CB338",
   },
   predictionItem: {
     paddingVertical: 8,
@@ -286,18 +297,15 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
   },
 
   secondaryText: {
     fontSize: 13,
-    color: "#777",
     marginTop: 2,
   },
 
   distanceText: {
     fontSize: 11,
-    color: "#999",
     marginTop: 4,
     textAlign: "center",
   },
