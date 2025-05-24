@@ -74,10 +74,7 @@ export default function AddJobForm() {
 
   return (
     <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        { backgroundColor: background },
-      ]}
+      contentContainerStyle={[styles.container]}
       keyboardShouldPersistTaps="handled"
     >
       <Text style={[styles.header, { color: text }]}>
@@ -149,7 +146,7 @@ export default function AddJobForm() {
             }
           }}
           trackColor={{ true: primary, false: border }}
-          thumbColor={background}
+          thumbColor={text}
         />
       </View>
       {hasDeadline && (
@@ -318,6 +315,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 24,
     paddingBottom: 40,
+    marginTop: 20,
   },
   header: {
     fontSize: 26,
