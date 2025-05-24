@@ -216,7 +216,6 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                         styles.optionText,
                         { color: text },
                         sort === item && {
-                          ...styles.optionTextSelected,
                           color: primary,
                         },
                       ]}
@@ -300,7 +299,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
-  optionTextSelected: {},
   modalClose: {
     marginTop: 24,
     paddingVertical: 14,

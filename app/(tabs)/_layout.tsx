@@ -1,3 +1,5 @@
+// app/(tabs)/_layout.tsx
+
 import { Tabs } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
@@ -24,16 +26,11 @@ export default function TabLayout() {
           fontSize: 10,
           fontWeight: "600",
         },
-        tabBarStyle: Platform.select({
-          android: {
-            backgroundColor: background,
-            borderTopWidth: 0,
-            elevation: 6,
-          },
-          default: {
-            backgroundColor: background,
-          },
-        }),
+        tabBarStyle: {
+          backgroundColor: background,
+          borderTopWidth: 0,
+          elevation: Platform.OS === "android" ? 6 : 0,
+        },
       }}
     >
       <Tabs.Screen

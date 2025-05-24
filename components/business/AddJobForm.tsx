@@ -4,6 +4,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Location from "expo-location";
 import React, { useState } from "react";
 import {
+  KeyboardAvoidingView,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -25,7 +26,6 @@ export default function AddJobForm() {
   const [budget, setBudget] = useState("");
   const [duration, setDuration] = useState("");
   const [location, setLocation] = useState("");
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const primary = useThemeColor({}, "primary");
@@ -73,285 +73,299 @@ export default function AddJobForm() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.container]}
-      keyboardShouldPersistTaps="handled"
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={"height"}>
       <Text style={[styles.header, { color: text }]}>
         What's your{" "}
         <Text style={[styles.headerHighlight, { color: primary }]}>price</Text>{" "}
         to
       </Text>
-      <TextInput
-        style={[
-          styles.input,
-          {
-            marginBottom: 5,
-            color: text,
-            borderColor: border,
-          },
-        ]}
-        maxLength={50}
-        placeholder="Short description (e.g., do my taxes?)"
-        placeholderTextColor={secondary}
-        value={title}
-        onChangeText={(text) => {
-          setTitle(text);
-          setErrors({ ...errors, title: "" });
-        }}
-      />
-      <Text style={[styles.charCount, { color: secondary }]}>
-        {title.length}/50
-      </Text>
-      {errors.title && <Text style={styles.error}>{errors.title}</Text>}
-      <TextInput
-        style={[
-          styles.input,
-          styles.multilineInput,
-          {
-            marginBottom: 5,
-            color: text,
-            borderColor: border,
-          },
-        ]}
-        multiline
-        maxLength={500}
-        placeholder="Describe what needs to be done"
-        placeholderTextColor={secondary}
-        value={description}
-        onChangeText={(text) => {
-          setDescription(text);
-          setErrors({ ...errors, description: "" });
-        }}
-      />
-      <Text style={[styles.charCount, { color: secondary }]}>
-        {description.length}/500
-      </Text>
-      {errors.description && (
-        <Text style={styles.error}>{errors.description}</Text>
-      )}
-      <View style={styles.row}>
-        <Text style={[styles.label, { fontWeight: "600", color: text }]}>
-          Is there a deadline?
-        </Text>
-        <Switch
-          value={hasDeadline}
-          onValueChange={(val) => {
-            setHasDeadline(val);
-            if (!val) {
-              setDeadline(null);
-              setErrors({ ...errors, deadline: "" });
-            }
-          }}
-          trackColor={{ true: primary, false: border }}
-          thumbColor={text}
-        />
-      </View>
-      {hasDeadline && (
-        <>
-          <Pressable
-            onPress={() => setShowDatePicker(true)}
-            style={[
-              styles.datePickerButton,
-              { borderColor: border, backgroundColor: background },
-            ]}
-          >
-            <MaterialIcons name="calendar-today" size={18} color={primary} />
-            <Text style={[styles.dateText, { color: primary }]}>
-              {" "}
-              {deadline
-                ? deadline.toLocaleDateString() +
-                  " " +
-                  deadline.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "Pick a date & time"}
-            </Text>
-          </Pressable>
-          {errors.deadline && (
-            <Text style={styles.error}>{errors.deadline}</Text>
-          )}
-          {showDatePicker && (
-            <DateTimePicker
-              value={deadline || new Date()}
-              mode="datetime"
-              display={"default"}
-              onChange={handleDateChange}
-              minimumDate={new Date()}
-            />
-          )}
-        </>
-      )}
-      <View style={styles.optionsRow}>
-        {["remote", "onsite", "both"].map((item) => (
-          <Pressable
-            key={item}
-            style={[
-              styles.optionButton,
-              { borderColor: border },
-              mode === item && {
-                borderColor: primary,
-              },
-            ]}
-            onPress={() => setMode(item as ModeType)}
-          >
-            {item === "onsite" ? (
-              <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={16}
-                color={mode === item ? primary : text}
-              />
-            ) : (
-              <MaterialIcons
-                name={
-                  item === "remote"
-                    ? "wifi"
-                    : item === "onsite"
-                    ? "location-on"
-                    : "public"
-                }
-                size={16}
-                color={mode === item ? primary : text}
-              />
-            )}
-            <Text
-              style={[
-                styles.optionText,
-                { color: text },
-                mode === item && { color: primary },
-              ]}
-            >
-              {item.charAt(0).toUpperCase() + item.slice(1)}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-      <View style={styles.budgetRow}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <TextInput
           style={[
             styles.input,
-            {
-              flex: 1,
-              color: text,
-              borderColor: border,
-            },
+            { color: text, borderColor: border, marginBottom: 4 },
           ]}
-          keyboardType="numeric"
-          placeholder="Estimated budget (e.g., 5000)"
+          maxLength={50}
+          placeholder="Short description (e.g., do my taxes?)"
           placeholderTextColor={secondary}
-          value={budget}
+          value={title}
           onChangeText={(text) => {
-            setBudget(text);
-            setErrors({ ...errors, budget: "" });
+            setTitle(text);
+            setErrors({ ...errors, title: "" });
           }}
         />
-        <Text style={[styles.inr, { color: primary }]}>INR</Text>
-      </View>
-      {errors.budget && <Text style={styles.error}>{errors.budget}</Text>}
-      <TextInput
-        style={[styles.input, { color: text, borderColor: border }]}
-        placeholder="Estimated duration (e.g., 2 weeks)"
-        placeholderTextColor={secondary}
-        value={duration}
-        onChangeText={(text) => {
-          setDuration(text);
-          setErrors({ ...errors, duration: "" });
-        }}
-      />
-      {errors.duration && <Text style={styles.error}>{errors.duration}</Text>}
-      <TextInput
-        style={[styles.input, { color: text, borderColor: border }]}
-        placeholder="Location or use current location"
-        placeholderTextColor={secondary}
-        value={location}
-        onChangeText={(text) => {
-          setLocation(text);
-          setErrors({ ...errors, location: "" });
-        }}
-      />
-      {errors.location && <Text style={styles.error}>{errors.location}</Text>}
-      <Pressable
-        onPress={handleUseCurrentLocation}
-        style={styles.locationButton}
-      >
-        <MaterialCommunityIcons
-          name="navigation-variant-outline"
-          size={20}
-          color={primary}
-        />
-        <Text style={[styles.useLocationText, { color: primary }]}>
-          Use Current Location
-        </Text>
-      </Pressable>
-      <Pressable
-        style={[styles.submitButton, { backgroundColor: primary }]}
-        onPress={handleSubmit}
-      >
-        <Text
+        <View style={styles.infoRow}>
+          <Text style={[styles.charCount, { color: secondary }]}>
+            {title.length}/50
+          </Text>
+          {errors.title && <Text style={styles.error}>{errors.title}</Text>}
+        </View>
+
+        <TextInput
           style={[
-            styles.submitText,
-            { color: background === "#1b1b1b" ? "#111" : "#fff" },
+            styles.input,
+            styles.multilineInput,
+            { color: text, borderColor: border, marginBottom: 4 },
           ]}
+          multiline
+          maxLength={500}
+          placeholder="Describe what needs to be done"
+          placeholderTextColor={secondary}
+          value={description}
+          onChangeText={(text) => {
+            setDescription(text);
+            setErrors({ ...errors, description: "" });
+          }}
+        />
+        <View style={styles.infoRow}>
+          <Text style={[styles.charCount, { color: secondary }]}>
+            {description.length}/500
+          </Text>
+          {errors.description && (
+            <Text style={styles.error}>{errors.description}</Text>
+          )}
+        </View>
+
+        {/* Deadline Toggle */}
+        <View style={styles.row}>
+          <Text style={[styles.label, { color: text }]}>
+            Is there a deadline?
+          </Text>
+          <Switch
+            value={hasDeadline}
+            onValueChange={(val) => {
+              setHasDeadline(val);
+              if (!val) {
+                setDeadline(null);
+                setErrors({ ...errors, deadline: "" });
+              }
+            }}
+            trackColor={{ true: primary, false: border }}
+            thumbColor={text}
+          />
+        </View>
+
+        {hasDeadline && (
+          <>
+            <Pressable
+              onPress={() => setShowDatePicker(true)}
+              style={[
+                styles.datePickerButton,
+                { borderColor: border, backgroundColor: background },
+              ]}
+            >
+              <MaterialIcons name="calendar-today" size={18} color={primary} />
+              <Text style={[styles.dateText, { color: primary }]}>
+                {deadline
+                  ? deadline.toLocaleDateString() +
+                    " " +
+                    deadline.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "Pick a date & time"}
+              </Text>
+            </Pressable>
+            {errors.deadline && (
+              <Text style={styles.error}>{errors.deadline}</Text>
+            )}
+            {showDatePicker && (
+              <DateTimePicker
+                value={deadline || new Date()}
+                mode="datetime"
+                display="default"
+                onChange={handleDateChange}
+                minimumDate={new Date()}
+              />
+            )}
+          </>
+        )}
+
+        <View style={styles.optionsRow}>
+          {["remote", "onsite", "both"].map((item) => (
+            <Pressable
+              key={item}
+              style={[
+                styles.optionButton,
+                { borderColor: border },
+                mode === item && {
+                  borderColor: primary,
+                  borderWidth: 1,
+                },
+              ]}
+              onPress={() => setMode(item as ModeType)}
+            >
+              {item === "onsite" ? (
+                <MaterialCommunityIcons
+                  name="map-marker-outline"
+                  size={16}
+                  color={mode === item ? primary : text}
+                />
+              ) : (
+                <MaterialIcons
+                  name={
+                    item === "remote"
+                      ? "wifi"
+                      : item === "onsite"
+                      ? "location-on"
+                      : "public"
+                  }
+                  size={16}
+                  color={mode === item ? primary : text}
+                />
+              )}
+              <Text
+                style={[
+                  styles.optionText,
+                  { color: text },
+                  mode === item && {
+                    color: primary,
+                  },
+                ]}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={styles.budgetDurationRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.inputLabel, { color: text }]}>
+              Budget (INR)
+            </Text>
+            <TextInput
+              style={[styles.input, { color: text, borderColor: border }]}
+              keyboardType="numeric"
+              placeholder="e.g., 5000"
+              placeholderTextColor={secondary}
+              value={budget}
+              onChangeText={(text) => {
+                setBudget(text);
+                setErrors({ ...errors, budget: "" });
+              }}
+            />
+            {errors.budget && <Text style={styles.error}>{errors.budget}</Text>}
+          </View>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={[styles.inputLabel, { color: text }]}>Duration</Text>
+            <TextInput
+              style={[styles.input, { color: text, borderColor: border }]}
+              placeholder="e.g., 2 weeks"
+              placeholderTextColor={secondary}
+              value={duration}
+              onChangeText={(text) => {
+                setDuration(text);
+                setErrors({ ...errors, duration: "" });
+              }}
+            />
+            {errors.duration && (
+              <Text style={styles.error}>{errors.duration}</Text>
+            )}
+          </View>
+        </View>
+
+        <View style={styles.locationRow}>
+          <TextInput
+            style={[
+              styles.input,
+              { flex: 1, color: text, borderColor: border },
+            ]}
+            placeholder="Location"
+            placeholderTextColor={secondary}
+            value={location}
+            onChangeText={(text) => {
+              setLocation(text);
+              setErrors({ ...errors, location: "" });
+            }}
+          />
+          <Pressable
+            onPress={handleUseCurrentLocation}
+            style={[styles.locationButton]}
+          >
+            <MaterialCommunityIcons
+              name="navigation-variant-outline"
+              size={20}
+              color={primary}
+            />
+          </Pressable>
+        </View>
+        {errors.location && <Text style={styles.error}>{errors.location}</Text>}
+
+        <Pressable
+          style={[styles.submitButton, { backgroundColor: primary }]}
+          onPress={handleSubmit}
         >
-          Post Job
-        </Text>
-      </Pressable>
-    </ScrollView>
+          <Text
+            style={[
+              styles.submitText,
+              { color: background === "#1b1b1b" ? "#111" : "#fff" },
+            ]}
+          >
+            Post Job
+          </Text>
+        </Pressable>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
-    paddingBottom: 40,
-    marginTop: 20,
+    paddingHorizontal: 24,
   },
   header: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: "800",
-    marginBottom: 12,
+    padding: 24,
+    paddingTop: 40,
   },
-  headerHighlight: {},
+  headerHighlight: {
+    fontWeight: "900",
+  },
   input: {
     borderWidth: 1,
-    borderRadius: 8,
-    padding: 14,
-    fontSize: 15,
-    marginBottom: 12,
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    fontSize: 14,
+    marginBottom: 4,
   },
   multilineInput: {
-    height: 120,
+    height: 130,
     textAlignVertical: "top",
+    marginBottom: 12,
   },
   charCount: {
     fontSize: 12,
     textAlign: "right",
-    marginBottom: 16,
+    marginBottom: 8,
   },
   error: {
     color: "red",
     fontSize: 12,
-    marginTop: -8,
-    marginBottom: 12,
+    marginTop: -4,
+    marginBottom: 10,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: 8,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
   },
   datePickerButton: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 14,
     marginBottom: 12,
     borderWidth: 1,
   },
@@ -362,8 +376,8 @@ const styles = StyleSheet.create({
   optionsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 16,
-    gap: 8,
+    marginBottom: 16,
+    gap: 16,
   },
   optionButton: {
     flex: 1,
@@ -372,15 +386,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 10,
     borderWidth: 1,
-    borderRadius: 6,
-    gap: 8,
+    borderRadius: 8,
+    gap: 6,
   },
-  optionSelected: {},
   optionText: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 13,
+    fontWeight: "500",
   },
-  optionTextSelected: {},
   budgetRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -388,34 +400,63 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   inr: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
   },
   locationButton: {
-    flexDirection: "row",
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    justifyContent: "center",
     alignItems: "center",
-    gap: 8,
-    marginTop: 4,
-    marginBottom: 24,
+    marginLeft: 8,
+    borderRadius: 12,
   },
   useLocationText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "600",
   },
   submitButton: {
-    marginTop: 12,
-    paddingVertical: 16,
-    borderRadius: 14,
+    marginTop: 6,
+    paddingVertical: 12,
+    borderRadius: 12,
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   submitText: {
-    color: "#fff", // Will be overridden inline with theme color
     fontWeight: "700",
-    fontSize: 17,
+    fontSize: 16,
+  },
+  rowLabel: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+    paddingHorizontal: 2,
+  },
+  inputLabel: {
+    fontWeight: "600",
+    fontSize: 14,
+    flex: 1,
+    textAlign: "left",
+    marginBottom: 6,
+    marginLeft: 2,
+  },
+  budgetDurationRow: {
+    flexDirection: "row",
+    marginBottom: 16,
+  },
+  locationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
   },
 });
