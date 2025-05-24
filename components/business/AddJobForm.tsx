@@ -88,7 +88,6 @@ export default function AddJobForm() {
           {
             marginBottom: 5,
             color: text,
-            backgroundColor: background,
             borderColor: border,
           },
         ]}
@@ -112,7 +111,6 @@ export default function AddJobForm() {
           {
             marginBottom: 5,
             color: text,
-            backgroundColor: background,
             borderColor: border,
           },
         ]}
@@ -191,10 +189,9 @@ export default function AddJobForm() {
             key={item}
             style={[
               styles.optionButton,
-              { borderColor: border, backgroundColor: background },
+              { borderColor: border },
               mode === item && {
                 borderColor: primary,
-                backgroundColor: background,
               },
             ]}
             onPress={() => setMode(item as ModeType)}
@@ -237,7 +234,6 @@ export default function AddJobForm() {
             {
               flex: 1,
               color: text,
-              backgroundColor: background,
               borderColor: border,
             },
           ]}
@@ -254,10 +250,7 @@ export default function AddJobForm() {
       </View>
       {errors.budget && <Text style={styles.error}>{errors.budget}</Text>}
       <TextInput
-        style={[
-          styles.input,
-          { color: text, backgroundColor: background, borderColor: border },
-        ]}
+        style={[styles.input, { color: text, borderColor: border }]}
         placeholder="Estimated duration (e.g., 2 weeks)"
         placeholderTextColor={secondary}
         value={duration}
@@ -268,10 +261,7 @@ export default function AddJobForm() {
       />
       {errors.duration && <Text style={styles.error}>{errors.duration}</Text>}
       <TextInput
-        style={[
-          styles.input,
-          { color: text, backgroundColor: background, borderColor: border },
-        ]}
+        style={[styles.input, { color: text, borderColor: border }]}
         placeholder="Location or use current location"
         placeholderTextColor={secondary}
         value={location}

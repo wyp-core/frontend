@@ -4,12 +4,10 @@ import { Platform } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const primary = useThemeColor({}, "primary");
   const secondary = useThemeColor({}, "secondary");
   const background = useThemeColor({}, "background");

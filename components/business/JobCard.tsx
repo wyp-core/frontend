@@ -36,8 +36,7 @@ export default function JobCard({
         styles.card,
         {
           borderColor: border,
-          backgroundColor: background,
-          shadowColor: border,
+          shadowColor: background,
         },
       ]}
     >
@@ -132,15 +131,14 @@ export default function JobCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 14,
-    padding: 20,
+    borderRadius: 12,
+    padding: 16,
     marginHorizontal: 16,
     marginVertical: 10,
-    shadowColor: "#000",
     shadowOpacity: 0.01,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 10,
-    elevation: 0.25,
+    elevation: 1,
     borderWidth: 1,
   },
   header: {
