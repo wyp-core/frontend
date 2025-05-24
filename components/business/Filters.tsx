@@ -1,4 +1,4 @@
-import { FontAwesome6 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import React, { useState } from "react";
 import {
@@ -89,17 +89,25 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                     ]}
                     onPress={() => setMode(item as ModeType)}
                   >
-                    <FontAwesome6
-                      name={
-                        item === "remote"
-                          ? "wifi"
-                          : item === "onsite"
-                          ? "location-dot"
-                          : "globe"
-                      }
-                      size={13}
-                      color={mode === item ? "#5CB338" : "#555"}
-                    />
+                    {item === "onsite" ? (
+                      <MaterialCommunityIcons
+                        name="map-marker-outline"
+                        size={16}
+                        color={mode === item ? "#5CB338" : "#555"}
+                      />
+                    ) : (
+                      <MaterialIcons
+                        name={
+                          item === "remote"
+                            ? "wifi"
+                            : item === "onsite"
+                            ? "location-on"
+                            : "public"
+                        }
+                        size={16}
+                        color={mode === item ? "#5CB338" : "#555"}
+                      />
+                    )}
                     <Text
                       style={[
                         styles.optionText,
@@ -123,9 +131,9 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                     ]}
                     onPress={() => setRadius(item as RadiusType)}
                   >
-                    <FontAwesome6
-                      name="location-dot"
-                      size={13}
+                    <MaterialCommunityIcons
+                      name="map-marker-outline"
+                      size={15}
                       color={radius === item ? "#5CB338" : "#000"}
                     />
                     <Text
@@ -152,9 +160,9 @@ export default function Filters({ visible, onClose }: FiltersProps) {
                     onPress={() => setSort(item as SortType)}
                   >
                     {item === "nearest" && (
-                      <FontAwesome6
-                        name="location-dot"
-                        size={13}
+                      <MaterialCommunityIcons
+                        name="map-marker-outline"
+                        size={15}
                         color={sort === item ? "#5CB338" : "#000"}
                       />
                     )}

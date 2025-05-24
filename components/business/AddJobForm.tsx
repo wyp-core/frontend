@@ -1,4 +1,4 @@
-import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Location from "expo-location";
 import React, { useState } from "react";
@@ -130,7 +130,7 @@ export default function AddJobForm() {
             onPress={() => setShowDatePicker(true)}
             style={styles.datePickerButton}
           >
-            <FontAwesome name="calendar-o" size={18} color="#5CB338" />
+            <MaterialIcons name="calendar-today" size={18} color="#5CB338" />
             <Text style={styles.dateText}>
               {deadline
                 ? deadline.toLocaleDateString() +
@@ -167,17 +167,26 @@ export default function AddJobForm() {
             ]}
             onPress={() => setMode(item as ModeType)}
           >
-            <FontAwesome6
-              name={
-                item === "remote"
-                  ? "wifi"
-                  : item === "onsite"
-                  ? "location-dot"
-                  : "globe"
-              }
-              size={13}
-              color={mode === item ? "#5CB338" : "#555"}
-            />
+            {item === "onsite" ? (
+              <MaterialCommunityIcons
+                name="map-marker-outline"
+                size={16}
+                color={mode === item ? "#5CB338" : "#555"}
+              />
+            ) : (
+              <MaterialIcons
+                name={
+                  item === "remote"
+                    ? "wifi"
+                    : item === "onsite"
+                    ? "location-on"
+                    : "public"
+                }
+                size={16}
+                color={mode === item ? "#5CB338" : "#555"}
+              />
+            )}
+
             <Text
               style={[
                 styles.optionText,
@@ -234,7 +243,11 @@ export default function AddJobForm() {
         onPress={handleUseCurrentLocation}
         style={styles.locationButton}
       >
-        <FontAwesome name="location-arrow" size={16} color="#5CB338" />
+        <MaterialCommunityIcons
+          name="navigation-variant-outline"
+          size={20}
+          color="#5CB338"
+        />
         <Text style={styles.useLocationText}>Use Current Location</Text>
       </Pressable>
 

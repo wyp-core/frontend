@@ -1,5 +1,5 @@
 import { formatCurrency, formatViews, timeAgo } from "@/constants/Utils";
-import { FontAwesome, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 interface JobCardProps {
@@ -49,28 +49,40 @@ export default function JobCard({
 
       <View style={styles.tagContainer}>
         <View style={styles.tag}>
-          <FontAwesome name="eye" size={12} color="#5CB338" />
+          <MaterialCommunityIcons
+            name="eye-outline"
+            size={15}
+            color="#5CB338"
+          />
           <Text style={styles.tagText}>{formatViews(views)}</Text>
         </View>
 
         <View style={styles.tag}>
-          <FontAwesome6
-            name={
-              mode.toLowerCase() === "remote"
-                ? "wifi"
-                : mode.toLowerCase() === "onsite"
-                ? "location-dot"
-                : "globe"
-            }
-            size={12}
-            color={"#5CB338"}
-          />
+          {mode.toLowerCase() === "onsite" ? (
+            <MaterialCommunityIcons
+              name="map-marker-outline"
+              size={15}
+              color={"#5CB338"}
+            />
+          ) : (
+            <MaterialIcons
+              name={
+                mode.toLowerCase() === "remote"
+                  ? "wifi"
+                  : mode.toLowerCase() === "onsite"
+                  ? "location-on"
+                  : "public"
+              }
+              size={15}
+              color={"#5CB338"}
+            />
+          )}
 
           <Text style={styles.tagText}>{mode}</Text>
         </View>
 
         <View style={styles.tag}>
-          <FontAwesome5 name="clock" size={12} color="#5CB338" />
+          <MaterialIcons name="schedule" size={15} color="#5CB338" />
           <Text style={styles.tagText}>{duration}</Text>
         </View>
       </View>

@@ -5,7 +5,7 @@ import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { FontAwesome } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -36,7 +36,7 @@ export default function TabLayout() {
         options={{
           title: "Jobs",
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="suitcase" size={20} color={color} />
+            <MaterialIcons name="work-outline" size={20} color={color} />
           ),
         }}
       />
@@ -45,11 +45,10 @@ export default function TabLayout() {
         options={{
           title: "Create",
           tabBarIcon: ({ color }) => (
-            <FontAwesome
-              name="plus-square-o"
-              size={22}
+            <MaterialCommunityIcons
+              name="plus-box-outline"
+              size={20}
               color={color}
-              style={{ marginTop: 2 }}
             />
           ),
         }}
@@ -59,7 +58,11 @@ export default function TabLayout() {
         options={{
           title: "Chats",
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="comments" size={20} color={color} />
+            <MaterialCommunityIcons
+              name="message-text-outline"
+              size={20}
+              color={color}
+            />
           ),
         }}
       />
@@ -68,7 +71,7 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="user" size={20} color={color} />
+            <MaterialIcons name="person-outline" size={22} color={color} />
           ),
         }}
       />

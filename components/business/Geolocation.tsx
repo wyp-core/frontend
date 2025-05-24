@@ -1,6 +1,6 @@
 import { haversineDistance } from "@/constants/Utils";
 import { useLocation } from "@/context/LocationContext";
-import { FontAwesome, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -119,13 +119,17 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
           <View style={styles.overlay}>
             <View style={styles.header}>
               <TouchableOpacity onPress={handleClose}>
-                <FontAwesome5 name="chevron-down" size={18} color="#000" />
+                <MaterialCommunityIcons
+                  name="chevron-down"
+                  size={18}
+                  color="#000"
+                />
               </TouchableOpacity>
               <Text style={styles.headerText}>Choose your location</Text>
             </View>
 
             <View style={styles.searchContainer}>
-              <FontAwesome
+              <MaterialIcons
                 name="search"
                 size={18}
                 color="#5CB338"
@@ -145,12 +149,13 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
               style={styles.currentLocationButton}
               onPress={handleUseCurrentLocation}
             >
-              <FontAwesome6
-                name="location-crosshairs"
+              <MaterialIcons
+                name="my-location"
                 size={18}
                 color="#5CB338"
                 style={{ marginRight: 8 }}
               />
+
               <Text style={styles.currentLocationText}>
                 Use current location
               </Text>
@@ -170,8 +175,8 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
                   >
                     <View style={styles.predictionRow}>
                       <View style={styles.iconContainer}>
-                        <FontAwesome6
-                          name="location-dot"
+                        <MaterialIcons
+                          name="location-on"
                           size={16}
                           color="#ccc"
                         />

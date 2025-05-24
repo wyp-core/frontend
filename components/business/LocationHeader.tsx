@@ -1,4 +1,4 @@
-import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -15,11 +15,11 @@ const LocationHeader: React.FC = () => {
         style={styles.locationBox}
         onPress={() => setModalVisible(true)}
       >
-        <FontAwesome6 name="location-dot" size={15} color="#5CB338" />
+        <MaterialIcons name="location-on" size={18} color="#5CB338" />
         <Text style={styles.locationText} numberOfLines={1}>
           {address}
         </Text>
-        <FontAwesome5 name="chevron-down" size={15} color="#888" />
+        <MaterialCommunityIcons name="chevron-down" size={24} color="#888" />
       </TouchableOpacity>
 
       <Geolocation

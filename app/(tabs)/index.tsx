@@ -21,7 +21,7 @@ export default function HomeScreen() {
         colors={["#d4f7dc", "#ffffff"]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
+        end={{ x: 0, y: 0.75 }}
       >
         <LocationProvider>
           <LocationHeader />

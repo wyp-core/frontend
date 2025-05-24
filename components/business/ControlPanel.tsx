@@ -1,4 +1,4 @@
-import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -80,7 +80,7 @@ export default function ControlPanel() {
                 </View>
               </View>
             )}
-            <FontAwesome name="search" size={18} color="#5CB338" />
+            <MaterialIcons name="search" size={20} color="#5CB338" />
           </View>
         </View>
 
@@ -88,7 +88,7 @@ export default function ControlPanel() {
           style={styles.filterButton}
           onPress={() => setFilterModalVisible(true)}
         >
-          <FontAwesome6 name="sliders" size={18} color="#5CB338" />
+          <MaterialIcons name="tune" size={20} color="#5CB338" />
         </TouchableOpacity>
       </View>
 
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   placeholderContainer: {
     position: "absolute",
-    left: 0,
+    left: 5,
     top: 8,
     flexDirection: "row",
   },
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   filterButton: {
     marginLeft: 8,
     backgroundColor: "#fff",
-    padding: 12,
+    padding: 8,
     borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
