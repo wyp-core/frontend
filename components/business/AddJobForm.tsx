@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import ConfirmationModal from '../ui/ConfirmationModal';
 
 type ModeType = 'remote' | 'onsite' | 'both';
 
@@ -38,6 +39,8 @@ export default function AddJobForm() {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedDurationUnit, setSelectedDurationUnit] = useState('days');
+  const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
+    useState(false);
 
   const primary = useThemeColor({}, 'primary');
   const secondary = useThemeColor({}, 'secondary');
@@ -46,6 +49,26 @@ export default function AddJobForm() {
   const border = useThemeColor({}, 'border');
 
   const { mutate: addJob, isPending } = useAddJob();
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setHasDeadline(false);
+    setDeadline(null);
+    setMode('both');
+    setBudget('');
+    setDurationValue('');
+    setLocation('');
+    setErrors({});
+  };
+
+  const confirmHandler = () => {
+    resetForm();
+    setIsConfirmationModalVisible(false);
+  };
+  const cancelHandler = () => {
+    setIsConfirmationModalVisible(false);
+    navigation.navigate('index');
+  };
 
   const handleUseCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -107,30 +130,7 @@ export default function AddJobForm() {
 
       addJob(payload, {
         onSuccess: () => {
-          Alert.alert(
-            'Job Created',
-            'Your job has been created. You will get a notification when the job is live.',
-            [
-              {
-                text: 'Return to Home',
-                onPress: () => navigation.navigate('index'),
-              },
-              {
-                text: 'Create More',
-                onPress: () => {
-                  setTitle('');
-                  setDescription('');
-                  setHasDeadline(false);
-                  setDeadline(null);
-                  setMode('both');
-                  setBudget('');
-                  setDurationValue('');
-                  setLocation('');
-                  setErrors({});
-                },
-              },
-            ]
-          );
+          setIsConfirmationModalVisible(true);
         },
         onError: () => {
           Alert.alert(
@@ -145,15 +145,7 @@ export default function AddJobForm() {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      setTitle('');
-      setDescription('');
-      setHasDeadline(false);
-      setDeadline(null);
-      setMode('both');
-      setBudget('');
-      setDurationValue('');
-      setLocation('');
-      setErrors({});
+      resetForm();
     });
 
     return unsubscribe;
@@ -173,7 +165,7 @@ export default function AddJobForm() {
       <ScrollView
         contentContainerStyle={[
           styles.container,
-          { flexGrow: 1, justifyContent: 'space-between' },
+          { justifyContent: 'space-between' },
         ]}
         keyboardShouldPersistTaps='handled'
       >
@@ -226,7 +218,7 @@ export default function AddJobForm() {
           <Text
             style={[
               styles.charCount,
-              { color: description.length >= 495 ? 'red' : secondary },
+              { color: description.length >= 495 ? red : secondary },
             ]}
           >
             {description.length}/500
@@ -399,24 +391,24 @@ export default function AddJobForm() {
           </Pressable>
         </View>
         {errors.location && <Text style={styles.error}>{errors.location}</Text>}
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.submitButton,
-            {
-              backgroundColor: primary,
-              opacity: pressed ? 0.8 : 1,
-            },
-          ]}
-          onPress={handleSubmit}
-          disabled={isPending}
-        >
-          <Text style={[styles.submitText, { color: '#fff', opacity: 1 }]}>
-            Post Job
-          </Text>
-          {isPending && <ActivityIndicator size='small' color='#fff' />}
-        </Pressable>
       </ScrollView>
+
+      <Pressable
+        style={({ pressed }) => [
+          styles.submitButton,
+          {
+            backgroundColor: primary,
+            opacity: pressed ? 0.8 : 1,
+          },
+        ]}
+        onPress={handleSubmit}
+        disabled={isPending}
+      >
+        <Text style={[styles.submitText, { color: '#fff', opacity: 1 }]}>
+          Post Job
+        </Text>
+        {isPending && <ActivityIndicator size='small' color='#fff' />}
+      </Pressable>
 
       <DurationPickerModal
         visible={isModalVisible}
@@ -426,6 +418,17 @@ export default function AddJobForm() {
           setSelectedDurationUnit(unit);
           setModalVisible(false);
         }}
+      />
+      <ConfirmationModal
+        visible={isConfirmationModalVisible}
+        message={
+          'Your job has been successfully posted and will be live shortly!'
+        }
+        title={'Job Posted Successfully'}
+        onConfirm={confirmHandler}
+        onCancel={cancelHandler}
+        confirmButtonText='Create new'
+        cancelButtonText='Return to home'
       />
     </KeyboardAvoidingView>
   );
@@ -538,6 +541,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 6,
+    marginHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
@@ -546,7 +550,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
-    marginBottom: 20,
+    marginBottom: 30,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 16,
