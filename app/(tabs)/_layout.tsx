@@ -1,18 +1,16 @@
-// app/(tabs)/_layout.tsx
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { Platform } from 'react-native';
 
-import { Tabs } from "expo-router";
-import React from "react";
-import { Platform } from "react-native";
-
-import { HapticTab } from "@/components/HapticTab";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { HapticTab } from '@/components/HapticTab';
+import TabBarBackground from '@/components/ui/TabBarBackground';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 export default function TabLayout() {
-  const primary = useThemeColor({}, "primary");
-  const secondary = useThemeColor({}, "secondary");
-  const background = useThemeColor({}, "background");
+  const primary = useThemeColor({}, 'primary');
+  const secondary = useThemeColor({}, 'secondary');
+  const background = useThemeColor({}, 'background');
 
   return (
     <Tabs
@@ -24,31 +22,31 @@ export default function TabLayout() {
         tabBarInactiveTintColor: secondary,
         tabBarLabelStyle: {
           fontSize: 10,
-          fontWeight: "600",
+          fontWeight: '600',
         },
         tabBarStyle: {
           backgroundColor: background,
           borderTopWidth: 0,
-          elevation: Platform.OS === "android" ? 6 : 0,
+          elevation: Platform.OS === 'android' ? 6 : 0,
         },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
-          title: "Jobs",
+          title: 'Jobs',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="work-outline" size={20} color={color} />
+            <MaterialIcons name='work-outline' size={20} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="create"
+        name='create'
         options={{
-          title: "Create",
+          title: 'Create',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="plus-box-outline"
+              name='plus-box-outline'
               size={20}
               color={color}
             />
@@ -56,12 +54,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="chats"
+        name='chats'
         options={{
-          title: "Chats",
+          title: 'Chats',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="message-text-outline"
+              name='message-text-outline'
               size={20}
               color={color}
             />
@@ -69,11 +67,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name='profile'
         options={{
-          title: "Profile",
+          title: 'Profile',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="person-outline" size={22} color={color} />
+            <MaterialIcons name='person-outline' size={22} color={color} />
           ),
         }}
       />

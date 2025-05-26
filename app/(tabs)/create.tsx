@@ -1,8 +1,7 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React from 'react';
 
-import AddJobForm from "@/components/business/AddJobForm";
-import GradientScreen from "@/components/ui/GradientScreen";
+import AddJobForm from '@/components/business/AddJobForm';
+import GradientScreen from '@/components/ui/GradientScreen';
 
 export default function Create() {
   return (
@@ -11,12 +10,3 @@ export default function Create() {
     </GradientScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  gradient: {
-    paddingTop: 25,
-  },
-});
