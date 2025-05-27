@@ -1,5 +1,5 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import React, { useState } from 'react';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React, { useState } from "react";
 import {
   FlatList,
   Modal,
@@ -7,10 +7,10 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+} from "react-native";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
-const durationUnits = ['minutes', 'hours', 'days', 'weeks', 'months'];
+const durationUnits = ["minutes", "hours", "days", "weeks", "months"];
 
 interface DurationPickerModalProps {
   visible: boolean;
@@ -25,11 +25,11 @@ const DurationPickerModal: React.FC<DurationPickerModalProps> = ({
   onSelect,
   selectedUnit,
 }) => {
-  const background = useThemeColor({}, 'background');
-  const text = useThemeColor({}, 'text');
-  const primary = useThemeColor({}, 'primary');
-  const secondary = useThemeColor({}, 'secondary');
-  const border = useThemeColor({}, 'border');
+  const background = useThemeColor({}, "background");
+  const text = useThemeColor({}, "text");
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const border = useThemeColor({}, "border");
 
   const currentIndex = selectedUnit ? durationUnits.indexOf(selectedUnit) : 0;
 
@@ -46,13 +46,14 @@ const DurationPickerModal: React.FC<DurationPickerModalProps> = ({
           style={[styles.dropdownItem, { borderBottomColor: border }]}
           onPress={() => {
             setSelectedIndex(index);
-            setDropdownOpen(false);
+            onSelect(durationUnits[index]);
+            onClose();
           }}
         >
           <Text
             style={{
               color: index === selectedIndex ? primary : text,
-              fontWeight: index === selectedIndex ? '700' : '400',
+              fontWeight: index === selectedIndex ? "700" : "400",
             }}
           >
             {item}
@@ -66,7 +67,7 @@ const DurationPickerModal: React.FC<DurationPickerModalProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType='fade'
+      animationType="fade"
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -82,9 +83,8 @@ const DurationPickerModal: React.FC<DurationPickerModalProps> = ({
           activeOpacity={1}
         >
           <View style={styles.titleRow}>
-            <Icon name='timer' size={18} color={primary} />
+            <Icon name="timer" size={18} color={primary} />
             <Text style={[styles.titleText, { color: text }]}>
-              {' '}
               Select Duration Unit
             </Text>
           </View>
@@ -97,23 +97,13 @@ const DurationPickerModal: React.FC<DurationPickerModalProps> = ({
               {durationUnits[selectedIndex]}
             </Text>
             <Icon
-              name={dropdownOpen ? 'arrow-drop-up' : 'arrow-drop-down'}
+              name={dropdownOpen ? "arrow-drop-up" : "arrow-drop-down"}
               size={24}
               color={secondary}
             />
           </TouchableOpacity>
 
           {dropdownOpen && renderDropdown()}
-
-          <TouchableOpacity
-            style={[styles.confirmButton, { backgroundColor: primary }]}
-            onPress={() => {
-              onSelect(durationUnits[selectedIndex]);
-              onClose();
-            }}
-          >
-            <Text style={[styles.confirmText]}>Confirm</Text>
-          </TouchableOpacity>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
@@ -125,8 +115,8 @@ export default DurationPickerModal;
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
   modal: {
     padding: 20,
@@ -135,13 +125,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   titleText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     marginLeft: 8,
   },
   dropdown: {
@@ -149,9 +139,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   dropdownText: {
     fontSize: 14,
@@ -160,7 +150,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderWidth: 1,
     borderRadius: 12,
-    maxHeight: 150,
+    maxHeight: 140,
   },
   dropdownItem: {
     padding: 14,
@@ -170,11 +160,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 10,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   confirmText: {
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 14,
-    color: '#fff',
+    color: "#fff",
   },
 });

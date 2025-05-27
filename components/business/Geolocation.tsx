@@ -29,7 +29,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
   const [query, setQuery] = useState("");
   const [predictions, setPredictions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const { coords, updateLocation, setSelectedPlace } = useLocation();
+  const { userLocation, setSelectedLocation } = useLocation();
 
   const primary = useThemeColor({}, "primary");
   const text = useThemeColor({}, "text");
@@ -59,7 +59,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
       const json = await response.json();
 
       if (json.status === "OK") {
-        if (coords) {
+        if (userLocation) {
           const enriched = await Promise.all(
             json.predictions.map(async (item: any) => {
               const details = await fetch(
@@ -69,12 +69,18 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
               const loc = details.result?.geometry?.location;
               if (loc) {
                 const distance = haversineDistance(
-                  coords.lat,
-                  coords.long,
+                  userLocation.lat,
+                  userLocation.lng,
                   loc.lat,
                   loc.lng
                 );
-                return { ...item, distance, location: loc };
+                return {
+                  ...item,
+                  distance,
+                  location: loc,
+                  address:
+                    details.result?.formatted_address || item.description,
+                };
               }
               return item;
             })
@@ -98,14 +104,17 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
   };
 
   const handleUseCurrentLocation = () => {
-    updateLocation();
+    if (userLocation) {
+      setSelectedLocation(userLocation);
+    }
     handleClose();
   };
 
   const handleSelectPrediction = (item: any) => {
-    setSelectedPlace({
-      description: item.description,
-      location: item.location,
+    setSelectedLocation({
+      lat: item.location.lat,
+      lng: item.location.lng,
+      address: item.address || item.description,
     });
     handleClose();
   };

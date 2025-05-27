@@ -3,8 +3,15 @@ export const formatViews = (num: number) => {
   return `${num.toString()} views`;
 };
 
-export const timeAgo = (timestamp: number) => {
-  if (timestamp.toString().length === 10) {
+export const timeAgo = (timestamp: number | string) => {
+  if (typeof timestamp === "string") {
+    const cleaned = timestamp.replace(/\.\d+/, "");
+    const date = new Date(cleaned);
+    if (isNaN(date.getTime())) return "now";
+    timestamp = date.getTime();
+  }
+
+  if (typeof timestamp === "number" && timestamp.toString().length === 10) {
     timestamp = timestamp * 1000;
   }
 

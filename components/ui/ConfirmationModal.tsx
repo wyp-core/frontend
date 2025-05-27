@@ -1,6 +1,6 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import React from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React from "react";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface ConfirmationModalProps {
   visible: boolean;
@@ -18,19 +18,24 @@ const ConfirmationModal = ({
   message,
   onConfirm,
   onCancel,
-  confirmButtonText = 'Confirm',
-  cancelButtonText = 'Cancel',
+  confirmButtonText = "Confirm",
+  cancelButtonText = "Cancel",
 }: ConfirmationModalProps) => {
-  const primary = useThemeColor({}, 'primary');
-  const secondary = useThemeColor({}, 'secondary');
-  const text = useThemeColor({}, 'text');
-  const background = useThemeColor({}, 'background');
-  const border = useThemeColor({}, 'border');
-  const theme = useThemeColor({}, 'theme');
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const text = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const border = useThemeColor({}, "border");
+  const theme = useThemeColor({}, "theme");
 
   return (
-    <Modal visible={visible} animationType='slide' transparent>
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
+        <TouchableOpacity
+          style={styles.overlayTouchable}
+          activeOpacity={1}
+          onPress={onCancel}
+        />
         <View
           style={[
             styles.modalContainer,
@@ -45,7 +50,7 @@ const ConfirmationModal = ({
               style={[styles.confirmButton, { backgroundColor: primary }]}
               onPress={onConfirm}
             >
-              <Text style={[styles.buttonText, { color: 'white' }]}>
+              <Text style={[styles.buttonText, { color: "white" }]}>
                 {confirmButtonText}
               </Text>
             </TouchableOpacity>
@@ -66,44 +71,50 @@ export default ConfirmationModal;
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  overlayTouchable: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
   },
   modalContainer: {
-    width: '80%',
+    width: "80%",
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 5,
+    zIndex: 2,
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   message: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
   },
   buttonContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   cancelButton: {
-    width: '100%',
+    width: "100%",
     padding: 10,
     borderRadius: 50,
-    alignItems: 'center',
+    alignItems: "center",
   },
   confirmButton: {
-    width: '100%',
+    width: "100%",
     padding: 12,
     borderRadius: 50,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
