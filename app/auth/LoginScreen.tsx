@@ -1,7 +1,7 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { FontAwesome } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,31 +12,30 @@ import {
   Text,
   TextInput,
   View,
-} from 'react-native';
+} from "react-native";
 
 const LoginScreen = () => {
   const [mobileNumber, setMobileNumber] = useState({
-    countryCode: '+91',
-    number: '',
+    countryCode: "+91",
+    number: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const border = useThemeColor({}, 'border');
-  const secondary = useThemeColor({}, 'secondary');
-  const errorColor = useThemeColor({}, 'error');
-  const theme = useThemeColor({}, 'theme');
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const border = useThemeColor({}, "border");
+  const secondary = useThemeColor({}, "secondary");
+  const errorColor = useThemeColor({}, "error");
 
   const handleNext = () => {
     if (mobileNumber.number.length !== 10) {
-      setError('Please enter a valid mobile number');
+      setError("Please enter a valid mobile number");
     } else {
-      setError('');
+      setError("");
       router.push({
-        pathname: '/auth/OTPScreen',
+        pathname: "/auth/OTPScreen",
         params: {
           number: mobileNumber.number,
           countryCode: mobileNumber.countryCode,
@@ -48,21 +47,21 @@ const LoginScreen = () => {
   const mobileNumberChangeHandler = (text: string) => {
     setMobileNumber((prev) => ({
       ...prev,
-      number: text.replace(/[^0-9]/g, ''),
+      number: text.replace(/[^0-9]/g, ""),
     }));
-    setError('');
+    setError("");
   };
 
   return (
     <SafeAreaView style={[styles.safeArea]}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={-80}
       >
         <ScrollView
           contentContainerStyle={styles.scrollViewContent}
-          keyboardShouldPersistTaps='handled'
+          keyboardShouldPersistTaps="handled"
         >
           <View style={styles.centeredContent}>
             <View style={[styles.logo, { backgroundColor: primary }]}>
@@ -94,9 +93,9 @@ const LoginScreen = () => {
                     styles.mobileInput,
                     { borderColor: border, color: text },
                   ]}
-                  placeholder='10-digit mobile number'
+                  placeholder="10-digit mobile number"
                   placeholderTextColor={secondary}
-                  keyboardType='phone-pad'
+                  keyboardType="phone-pad"
                   maxLength={10}
                   value={mobileNumber.number}
                   onChangeText={mobileNumberChangeHandler}
@@ -105,10 +104,10 @@ const LoginScreen = () => {
                   <Pressable
                     style={[styles.crossIcon]}
                     onPress={() =>
-                      setMobileNumber((prev) => ({ ...prev, number: '' }))
+                      setMobileNumber((prev) => ({ ...prev, number: "" }))
                     }
                   >
-                    <FontAwesome name='close' size={14} color={primary} />
+                    <FontAwesome name="close" size={14} color={primary} />
                   </Pressable>
                 )}
               </View>
@@ -127,17 +126,17 @@ const LoginScreen = () => {
           </View>
 
           <Text style={[styles.termsText, { color: secondary }]}>
-            By continuing, you agree to our{' '}
+            By continuing, you agree to our{" "}
             <Text
               style={{ color: primary }}
-              onPress={() => console.log('Terms')}
+              onPress={() => console.log("Terms")}
             >
               Terms of Service
-            </Text>{' '}
-            and{' '}
+            </Text>{" "}
+            and{" "}
             <Text
               style={{ color: primary }}
-              onPress={() => console.log('Privacy')}
+              onPress={() => console.log("Privacy")}
             >
               Privacy Policy
             </Text>
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingHorizontal: 24,
     paddingVertical: 16,
   },
@@ -164,37 +163,37 @@ const styles = StyleSheet.create({
   },
   centeredContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   logo: {
     width: 75,
     height: 75,
     borderRadius: 50,
     marginVertical: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   logoText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 6,
     marginBottom: 24,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 16,
     marginBottom: 4,
     gap: 5,
@@ -209,8 +208,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderRadius: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   mobileInput: {
     padding: 12,
@@ -219,23 +218,23 @@ const styles = StyleSheet.create({
   },
   crossIcon: {
     padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   button: {
     marginTop: 12,
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 12,
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   termsText: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 50,
   },
   errorText: {

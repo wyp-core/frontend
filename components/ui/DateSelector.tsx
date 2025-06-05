@@ -1,241 +1,136 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import {
-  FlatList,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React from "react";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
+import DateTimePicker, { useDefaultStyles } from "react-native-ui-datepicker";
 
-const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
-interface DatePickerModalProps {
+interface DateSelectorProps {
   visible: boolean;
   onClose: () => void;
-  onSelect: (date: Date) => void;
+  onDateChange: (date: Date) => void;
+  value: Date | number | null;
+  maxDate: Date | number | null;
+  minDate: Date | number | null;
 }
 
-const DatePickerModal: React.FC<DatePickerModalProps> = ({
+const DateSelector: React.FC<DateSelectorProps> = ({
   visible,
   onClose,
-  onSelect,
+  onDateChange,
+  value,
+  maxDate,
+  minDate,
 }) => {
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
-  const currentDate = today.getDate();
+  const theme = useThemeColor({}, "theme");
+  const border = useThemeColor({}, "border");
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const text = useThemeColor({}, "text");
 
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-  const [selectedDay, setSelectedDay] = useState(currentDate);
-  const [monthDropdown, setMonthDropdown] = useState(false);
-  const [dayDropdown, setDayDropdown] = useState(false);
-
-  const background = useThemeColor({}, 'background');
-  const text = useThemeColor({}, 'text');
-  const primary = useThemeColor({}, 'primary');
-  const secondary = useThemeColor({}, 'secondary');
-  const border = useThemeColor({}, 'border');
-
-  const getDaysInMonth = (monthIndex: number) =>
-    new Date(currentYear, monthIndex + 1, 0).getDate();
-
-  const getFilteredDays = () => {
-    const total = getDaysInMonth(selectedMonth);
-    const start = selectedMonth === currentMonth ? currentDate : 1;
-    return Array.from({ length: total - start + 1 }, (_, i) => start + i);
-  };
-
-  const renderDropdown = (
-    data: any[],
-    onItemPress: (item: any, index: number) => void,
-    keyExtractor: (item: any, index: number) => string
-  ) => (
-    <FlatList
-      data={data}
-      keyExtractor={keyExtractor}
-      style={[styles.dropdownList, { borderColor: border }]}
-      renderItem={({ item, index }) => (
-        <TouchableOpacity
-          style={[styles.dropdownItem, { borderBottomColor: border }]}
-          onPress={() => onItemPress(item, index)}
-        >
-          <Text style={{ color: text }}>{item}</Text>
-        </TouchableOpacity>
-      )}
-    />
-  );
+  const defaultStyles = useDefaultStyles();
 
   return (
-    <Modal visible={visible} transparent animationType='fade'>
-      <TouchableOpacity
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <TouchableOpacity
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <Pressable style={styles.modalContainer} onPress={onClose}>
+        <View
           style={[
-            styles.modal,
-            { backgroundColor: background, borderColor: border },
+            styles.calendarWrapper,
+            {
+              borderColor: border,
+              backgroundColor: theme === "dark" ? "#111" : "#fff",
+            },
           ]}
-          activeOpacity={1}
         >
-          <Text style={[styles.title, { color: text }]}>
-            <View style={styles.titleRow}>
-              <MaterialIcons name='calendar-month' color={primary} size={18} />
-              <Text style={[styles.titleText, { color: text }]}>
-                {' '}
-                Select Date
-              </Text>
-            </View>
-          </Text>
-
-          <View style={styles.dropdownRow}>
-            <TouchableOpacity
-              style={[styles.dropdown, { borderColor: border }]}
-              onPress={() => {
-                setMonthDropdown(!monthDropdown);
-                setDayDropdown(false);
-              }}
-            >
-              <Text style={[styles.dropdownText, { color: text }]}>
-                {months[selectedMonth]}
-              </Text>
-              <Icon name='arrow-drop-down' size={24} color={secondary} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.dropdown, { borderColor: border }]}
-              onPress={() => {
-                setDayDropdown(!dayDropdown);
-                setMonthDropdown(false);
-              }}
-            >
-              <Text style={[styles.dropdownText, { color: text }]}>
-                {selectedDay}
-              </Text>
-              <Icon name='arrow-drop-down' size={24} color={secondary} />
-            </TouchableOpacity>
-          </View>
-
-          {monthDropdown &&
-            renderDropdown(
-              months.slice(currentMonth),
-              (_, i) => {
-                const index = currentMonth + i;
-                setSelectedMonth(index);
-                if (selectedDay > getDaysInMonth(index)) {
-                  setSelectedDay(getDaysInMonth(index));
-                }
-                setMonthDropdown(false);
+          <DateTimePicker
+            mode="single"
+            date={value}
+            maxDate={maxDate}
+            minDate={minDate}
+            onChange={(params: any) => onDateChange(params)}
+            styles={{
+              ...defaultStyles,
+              today: { backgroundColor: primary },
+              today_label: { color: "#fff" },
+              selected: { backgroundColor: primary },
+              selected_label: { color: theme === "dark" ? "#000" : "#fff" },
+              day_label: { color: text },
+              disabled_label: { color: secondary, opacity: 0.5 },
+              month: {
+                borderColor: border,
+                borderWidth: 1,
+                borderRadius: 6,
               },
-              (item) => item
-            )}
-
-          {dayDropdown &&
-            renderDropdown(
-              getFilteredDays(),
-              (day) => {
-                setSelectedDay(day);
-                setDayDropdown(false);
+              year: {
+                borderColor: border,
+                borderWidth: 1,
+                borderRadius: 6,
               },
-              (item) => item.toString()
-            )}
+              month_label: {
+                color: text,
+              },
+              month_selector_label: {
+                color: text,
+                fontSize: 16,
+                fontWeight: "500",
+              },
+              year_label: { color: text },
+              year_selector_label: {
+                color: text,
+                fontSize: 16,
+                fontWeight: "500",
+              },
+              weekday_label: {
+                color: secondary,
+                fontSize: 12,
+                textTransform: "uppercase",
+              },
+              header: { marginBottom: 5 },
 
-          <TouchableOpacity
-            style={[styles.confirmButton, { backgroundColor: primary }]}
-            onPress={() => {
-              onSelect(new Date(currentYear, selectedMonth, selectedDay));
-              onClose();
+              selected_month: {
+                backgroundColor: primary,
+                borderColor: primary,
+              },
+              selected_month_label: {
+                color: theme === "dark" ? "#000" : "#fff",
+              },
+              selected_year: {
+                backgroundColor: primary,
+                borderColor: primary,
+              },
+              selected_year_label: {
+                color: theme === "dark" ? "#000" : "#fff",
+              },
+              button_next_image: {
+                tintColor: text,
+              },
+              button_prev_image: {
+                tintColor: text,
+              },
             }}
-          >
-            <Text style={[styles.confirmText, { color: '#fff' }]}>Confirm</Text>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </TouchableOpacity>
+          />
+        </View>
+      </Pressable>
     </Modal>
   );
 };
 
-export default DatePickerModal;
-
 const styles = StyleSheet.create({
-  overlay: {
+  modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  modal: {
-    padding: 20,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+  calendarWrapper: {
     borderWidth: 1,
-  },
-  title: {
-    fontWeight: '700',
-    marginBottom: 16,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  titleText: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginLeft: 8,
-  },
-  dropdownRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  dropdown: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  dropdownText: {
-    fontSize: 14,
-  },
-  dropdownList: {
-    marginTop: 10,
-    borderWidth: 1,
-    borderRadius: 12,
-    maxHeight: 150,
-  },
-  dropdownItem: {
-    padding: 14,
-    borderBottomWidth: 1,
-  },
-  confirmButton: {
-    marginTop: 20,
-    paddingVertical: 10,
     borderRadius: 8,
-    alignItems: 'center',
-  },
-  confirmText: {
-    fontWeight: '600',
-    fontSize: 14,
-    color: '#fff',
+    padding: 8,
+    marginHorizontal: 16,
   },
 });
+
+export default DateSelector;

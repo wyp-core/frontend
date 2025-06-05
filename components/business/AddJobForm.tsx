@@ -1,4 +1,3 @@
-import DatePickerModal from "@/components/ui/DateSelector";
 import DurationPickerModal from "@/components/ui/DurationPickerModal";
 import { LocationType, useLocation } from "@/context/LocationContext";
 
@@ -21,6 +20,7 @@ import {
   View,
 } from "react-native";
 import ConfirmationModal from "../ui/ConfirmationModal";
+import DateSelector from "../ui/DateSelector";
 import Geolocation from "./Geolocation";
 
 type ModeType = "remote" | "onsite" | "both";
@@ -31,7 +31,7 @@ export default function AddJobForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [hasDeadline, setHasDeadline] = useState(false);
-  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [deadline, setDeadline] = useState<Date>(new Date());
   const [mode, setMode] = useState<ModeType>("both");
   const [budget, setBudget] = useState("");
   const [durationValue, setDurationValue] = useState("");
@@ -54,7 +54,7 @@ export default function AddJobForm() {
     setTitle("");
     setDescription("");
     setHasDeadline(false);
-    setDeadline(null);
+    setDeadline(new Date());
     setMode("both");
     setBudget("");
     setDurationValue("");
@@ -80,7 +80,6 @@ export default function AddJobForm() {
       setIsDatePickerVisible(true);
     } else {
       setHasDeadline(false);
-      setDeadline(null);
       setErrors({ ...errors, deadline: "" });
     }
   };
@@ -113,6 +112,10 @@ export default function AddJobForm() {
         mode: "online",
         duration,
       };
+
+      if (hasDeadline) {
+        payload.deadline = deadline;
+      }
 
       addJob(payload, {
         onSuccess: () => {
@@ -235,10 +238,13 @@ export default function AddJobForm() {
             />
           </View>
 
-          <DatePickerModal
-            visible={isDatePickerVisible}
+          <DateSelector
+            value={deadline}
+            maxDate={new Date().setFullYear(new Date().getFullYear() + 1)}
+            minDate={new Date()}
+            onDateChange={(date: Date) => handleDateChange(date)}
             onClose={() => setIsDatePickerVisible(false)}
-            onSelect={handleDateChange}
+            visible={isDatePickerVisible}
           />
 
           <View style={styles.optionsRow}>
@@ -305,9 +311,6 @@ export default function AddJobForm() {
                   setErrors({ ...errors, budget: "" });
                 }}
               />
-              {errors.budget && (
-                <Text style={styles.error}>{errors.budget}</Text>
-              )}
             </View>
             <View style={{ flex: 1, flexDirection: "column", marginLeft: 12 }}>
               <Text style={[styles.inputLabel, { color: text }]}>Duration</Text>
@@ -345,6 +348,15 @@ export default function AddJobForm() {
                   />
                 </TouchableOpacity>
               </View>
+            </View>
+          </View>
+          <View style={styles.budgetDurationRow}>
+            <View style={{ flex: 1 }}>
+              {errors.budget && (
+                <Text style={styles.error}>{errors.budget}</Text>
+              )}
+            </View>
+            <View style={{ flex: 1, marginLeft: 12 }}>
               {errors.duration && (
                 <Text style={styles.error}>{errors.duration}</Text>
               )}
