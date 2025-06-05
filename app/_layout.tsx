@@ -23,7 +23,7 @@ export default function RootLayout() {
     Roboto_400Regular,
   });
 
-  const [isNew, setIsNew] = useState(false);
+  const [isNew, setIsNew] = useState(true);
 
   if (!loaded) return null;
 

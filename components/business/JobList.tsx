@@ -1,6 +1,6 @@
-import { useFetchJobs } from '@/hooks/jobApi';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { useCallback, useEffect, useState } from 'react';
+import { useFetchJobs } from "@/hooks/jobApi";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -9,13 +9,13 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import JobCard from './JobCard';
+} from "react-native";
+import JobCard from "./JobCard";
 
 export default function JobList({ filters }: { filters: any }) {
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const secondary = useThemeColor({}, 'secondary');
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const secondary = useThemeColor({}, "secondary");
 
   const [offset, setOffset] = useState(0);
   const [jobList, setJobList] = useState<any[]>([]);
@@ -28,6 +28,8 @@ export default function JobList({ filters }: { filters: any }) {
       ...filters,
       limit: 10,
       offset,
+      sort: null,
+      radius: null,
     };
 
     fetchJobs.mutate(payload, {
@@ -64,7 +66,7 @@ export default function JobList({ filters }: { filters: any }) {
   if (fetchJobs.isPending && jobList.length === 0) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size='large' color={primary} />
+        <ActivityIndicator size="large" color={primary} />
       </View>
     );
   }
@@ -73,9 +75,9 @@ export default function JobList({ filters }: { filters: any }) {
     return (
       <View style={styles.errorContainer}>
         <Image
-          source={require('@/assets/images/No connection-pana.svg')}
+          source={require("@/assets/images/No connection-pana.svg")}
           style={styles.errorImage}
-          resizeMode='contain'
+          resizeMode="contain"
         />
         <Text style={styles.errorTitle}>No Internet Connection</Text>
         <Text style={styles.errorSubtitle}>
@@ -115,7 +117,7 @@ export default function JobList({ filters }: { filters: any }) {
       ))}
       {fetchJobs.isPending && !isRefreshing && (
         <ActivityIndicator
-          size='small'
+          size="small"
           color={primary}
           style={styles.spinner}
         />
@@ -134,13 +136,13 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorImage: {
     width: 200,
@@ -149,13 +151,13 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorSubtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 20,
   },
   spinner: {

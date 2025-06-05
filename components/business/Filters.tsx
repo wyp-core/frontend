@@ -1,7 +1,7 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import Slider from '@react-native-community/slider';
-import React, { useEffect, useState } from 'react';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -9,15 +9,15 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
-} from 'react-native';
+} from "react-native";
 
 interface FiltersProps {
   visible: boolean;
   onClose: () => void;
 }
 
-export type ModeType = 'remote' | 'onsite' | 'both';
-export type SortType = 'nearest' | 'price';
+export type ModeType = "remote" | "onsite" | "both";
+export type SortType = "nearest" | "price";
 
 export default function Filters({
   visible,
@@ -36,10 +36,10 @@ export default function Filters({
     }
   }, [visible, initialFilters]);
 
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const background = useThemeColor({}, 'background');
-  const border = useThemeColor({}, 'border');
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const border = useThemeColor({}, "border");
 
   const updateFilter = (key: keyof typeof localFilters, value: any) => {
     setLocalFilters((prev: any) => ({ ...prev, [key]: value }));
@@ -47,7 +47,7 @@ export default function Filters({
 
   return (
     <Modal
-      animationType='fade'
+      animationType="fade"
       transparent
       visible={visible}
       onRequestClose={onClose}
@@ -66,65 +66,64 @@ export default function Filters({
 
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: text }]}>
-              Min Price:{' '}
-              <Text style={{ color: primary }}>₹{localFilters.minPrice}</Text>
-            </Text>
-            <Slider
-              minimumValue={100}
-              maximumValue={10000}
-              step={100}
-              value={localFilters.minPrice}
-              onValueChange={(value) => updateFilter('minPrice', value)}
-              minimumTrackTintColor={primary}
-              maximumTrackTintColor={border}
-              thumbTintColor={primary}
-            />
-            <Text style={[styles.sectionTitle, { color: text }]}>
-              Max Price:{' '}
+              Price Range:{" "}
               <Text style={{ color: primary }}>
-                ₹
+                ₹{localFilters.minPrice} - ₹
                 {localFilters.maxPrice === 10000
-                  ? '10000+'
+                  ? "10000+"
                   : localFilters.maxPrice}
               </Text>
             </Text>
-            <Slider
-              minimumValue={100}
-              maximumValue={10000}
+            <MultiSlider
+              values={[localFilters.minPrice, localFilters.maxPrice]}
+              sliderLength={320}
+              onValuesChange={(values) => {
+                updateFilter("minPrice", values[0]);
+                updateFilter("maxPrice", values[1]);
+              }}
+              min={100}
+              max={10000}
               step={100}
-              value={localFilters.maxPrice}
-              onValueChange={(value) => updateFilter('maxPrice', value)}
-              minimumTrackTintColor={primary}
-              maximumTrackTintColor={border}
-              thumbTintColor={primary}
+              selectedStyle={{ backgroundColor: primary }}
+              unselectedStyle={{ backgroundColor: border }}
+              markerStyle={{
+                backgroundColor: primary,
+                height: 12,
+                width: 12,
+              }}
             />
           </View>
 
-          <View style={styles.section}>
+          <View>
             <Text style={[styles.sectionTitle, { color: text }]}>
-              Search Radius:{' '}
+              Search Radius:{" "}
               <Text style={{ color: primary }}>
                 {localFilters.radius === 50
-                  ? '50+ km'
+                  ? "50+ km"
                   : `${localFilters.radius} km`}
               </Text>
             </Text>
-            <Slider
-              minimumValue={5}
-              maximumValue={50}
+            <MultiSlider
+              values={[localFilters.radius]}
+              sliderLength={320}
+              onValuesChange={(values) => updateFilter("radius", values[0])}
+              min={5}
+              max={51}
               step={1}
-              value={localFilters.radius}
-              onValueChange={(value) => updateFilter('radius', value)}
-              minimumTrackTintColor={primary}
-              maximumTrackTintColor={border}
-              thumbTintColor={primary}
+              selectedStyle={{ backgroundColor: primary }}
+              unselectedStyle={{ backgroundColor: border }}
+              markerStyle={{
+                backgroundColor: primary,
+                height: 12,
+                width: 12,
+              }}
             />
           </View>
 
           <View style={styles.section}>
             <Text style={[styles.subSectionTitle, { color: text }]}>Mode</Text>
             <View style={styles.optionRow}>
-              {['remote', 'onsite', 'both'].map((item) => (
+              {["remote", "onsite", "both"].map((item) => (
                 <Pressable
                   key={item}
                   style={[
@@ -132,21 +131,17 @@ export default function Filters({
                     {
                       borderColor:
                         localFilters.mode === item ? primary : border,
-                      backgroundColor:
-                        localFilters.mode === item
-                          ? primary + '20'
-                          : background,
                     },
                   ]}
-                  onPress={() => updateFilter('mode', item as ModeType)}
+                  onPress={() => updateFilter("mode", item as ModeType)}
                 >
                   <MaterialIcons
                     name={
-                      item === 'remote'
-                        ? 'wifi'
-                        : item === 'onsite'
-                        ? 'location-on'
-                        : 'public'
+                      item === "remote"
+                        ? "wifi"
+                        : item === "onsite"
+                        ? "location-on"
+                        : "public"
                     }
                     size={16}
                     color={localFilters.mode === item ? primary : text}
@@ -170,7 +165,7 @@ export default function Filters({
               Sort By
             </Text>
             <View style={styles.optionRow}>
-              {['nearest', 'price'].map((item) => (
+              {["nearest", "price"].map((item) => (
                 <Pressable
                   key={item}
                   style={[
@@ -178,17 +173,13 @@ export default function Filters({
                     {
                       borderColor:
                         localFilters.sort === item ? primary : border,
-                      backgroundColor:
-                        localFilters.sort === item
-                          ? primary + '20'
-                          : background,
                     },
                   ]}
-                  onPress={() => updateFilter('sort', item as SortType)}
+                  onPress={() => updateFilter("sort", item as SortType)}
                 >
                   <MaterialCommunityIcons
                     name={
-                      item === 'nearest' ? 'map-marker-outline' : 'currency-inr'
+                      item === "nearest" ? "map-marker-outline" : "currency-inr"
                     }
                     size={16}
                     color={localFilters.sort === item ? primary : text}
@@ -210,11 +201,13 @@ export default function Filters({
           <Pressable
             style={[styles.modalClose, { backgroundColor: primary }]}
             onPress={() => {
-              onApply(localFilters); // Pass updated filters to onApply
+              onApply(localFilters);
               onClose();
             }}
           >
-            <Text style={{ color: background, fontWeight: 'bold' }}>
+            <Text
+              style={{ color: background, fontWeight: "bold", color: "#fff" }}
+            >
               Apply Filters
             </Text>
           </Pressable>
@@ -227,8 +220,8 @@ export default function Filters({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
   modalContent: {
     padding: 20,
@@ -237,57 +230,56 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 24,
-    textAlign: 'justify',
+    textAlign: "justify",
   },
   section: {
     marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-    textAlign: 'justify',
+    fontWeight: "600",
+    textAlign: "justify",
   },
   subSectionTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
-    textAlign: 'justify',
+    textAlign: "justify",
   },
   sliderThumb: {
     width: 20,
     height: 20,
   },
   optionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     gap: 8,
   },
   optionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 14,
-    borderRadius: 12,
+    borderRadius: 6,
     borderWidth: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   optionText: {
     fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center',
+    fontWeight: "500",
+    textAlign: "center",
   },
   icon: {
-    alignSelf: 'center',
+    alignSelf: "center",
     marginRight: 8,
   },
   modalClose: {
     marginTop: 12,
     paddingVertical: 14,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
 });

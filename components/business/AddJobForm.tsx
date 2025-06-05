@@ -109,7 +109,7 @@ export default function AddJobForm() {
         lng: location?.lng,
         price: parseFloat(budget),
         category: "Web Development",
-        mode: "online",
+        mode: mode.toLowerCase(),
         duration,
       };
 

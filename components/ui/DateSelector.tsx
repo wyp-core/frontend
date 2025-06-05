@@ -50,7 +50,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
             date={value}
             maxDate={maxDate}
             minDate={minDate}
-            onChange={(params: any) => onDateChange(params)}
+            onChange={(params: any) => onDateChange(params.date)}
             styles={{
               ...defaultStyles,
               today: { backgroundColor: primary },

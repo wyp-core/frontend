@@ -94,7 +94,7 @@ export default function UserDetailsScreen() {
         ]}
         onPress={() => setShowDatePicker(true)}
       >
-        <Text style={{ color: formData.dob ? text : secondary, fontSize: 16 }}>
+        <Text style={{ color: formData.dob ? text : secondary, fontSize: 14 }}>
           {formData.dob
             ? new Date(formData.dob).toLocaleDateString()
             : "Select Date of Birth"}
@@ -108,6 +108,7 @@ export default function UserDetailsScreen() {
         maxDate={new Date().setFullYear(new Date().getFullYear() - 18)}
         minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
         onDateChange={(date: Date) => {
+          console.log(date);
           handleFormInputChange("dob", date);
           setShowDatePicker(false);
         }}
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 100,
     flexDirection: "column",
-    gap: 16,
+    gap: 24,
   },
   title: {
     fontSize: 24,
@@ -180,17 +181,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderRadius: 8,
-    height: 56,
+    height: 45,
     paddingLeft: 16,
   },
   input: {
     flex: 1,
-    fontSize: 16,
-  },
-  picker: {
-    flex: 1,
-    fontSize: 16,
-    borderRadius: 8,
+    fontSize: 14,
   },
   modalContainer: {
     flex: 1,
@@ -212,7 +208,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 8,
     borderRadius: 6,
-    fontSize: 14,
     borderWidth: 1,
   },
   genderText: {
@@ -230,6 +225,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 14,
   },
 });
