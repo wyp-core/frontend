@@ -1,11 +1,12 @@
-import { formatCurrency, formatViews, timeAgo } from "@/constants/Utils";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import { formatCurrency, formatViews, timeAgo } from '@/constants/Utils';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface JobCardProps {
   title: string;
-  location: string;
+  lat: number;
+  lon: number;
   price: string;
   description: string;
   duration: string;
@@ -22,15 +23,14 @@ export default function JobCard({
   description,
   duration,
   mode,
-  veiws,
+  views,
   createdAt,
-  isActive,
 }: JobCardProps) {
-  const primary = useThemeColor({}, "primary");
-  const text = useThemeColor({}, "text");
-  const background = useThemeColor({}, "background");
-  const border = useThemeColor({}, "border");
-  const secondary = useThemeColor({}, "secondary");
+  const primary = useThemeColor({}, 'primary');
+  const text = useThemeColor({}, 'text');
+  const background = useThemeColor({}, 'background');
+  const border = useThemeColor({}, 'border');
+  const secondary = useThemeColor({}, 'secondary');
 
   return (
     <View
@@ -68,7 +68,7 @@ export default function JobCard({
 
       <Text style={[styles.description, { color: secondary }]}>
         {description.length > 75
-          ? description.slice(0, 75).trim() + "..."
+          ? description.slice(0, 75).trim() + '...'
           : description}
       </Text>
 
@@ -80,12 +80,12 @@ export default function JobCard({
           ]}
         >
           <MaterialCommunityIcons
-            name="eye-outline"
+            name='eye-outline'
             size={15}
             color={primary}
           />
           <Text style={[styles.tagText, { color: text }]}>
-            {formatViews(veiws)}
+            {formatViews(views)}
           </Text>
         </View>
 
@@ -95,20 +95,20 @@ export default function JobCard({
             { borderColor: border, backgroundColor: background },
           ]}
         >
-          {mode.toLowerCase() === "onsite" ? (
+          {mode.toLowerCase() === 'onsite' ? (
             <MaterialCommunityIcons
-              name="map-marker-outline"
+              name='map-marker-outline'
               size={15}
               color={primary}
             />
           ) : (
             <MaterialIcons
               name={
-                mode.toLowerCase() === "remote"
-                  ? "wifi"
-                  : mode.toLowerCase() === "onsite"
-                  ? "location-on"
-                  : "public"
+                mode.toLowerCase() === 'remote'
+                  ? 'wifi'
+                  : mode.toLowerCase() === 'onsite'
+                  ? 'location-on'
+                  : 'public'
               }
               size={15}
               color={primary}
@@ -123,7 +123,7 @@ export default function JobCard({
             { borderColor: border, backgroundColor: background },
           ]}
         >
-          <MaterialIcons name="schedule" size={15} color={primary} />
+          <MaterialIcons name='schedule' size={15} color={primary} />
           <Text style={[styles.tagText, { color: text }]}>{duration}</Text>
         </View>
       </View>
@@ -144,31 +144,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 14,
   },
   titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     flexShrink: 1,
   },
   avatar: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   avatarText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 12,
     letterSpacing: 1,
   },
   title: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 4,
   },
   location: {
@@ -176,14 +176,14 @@ const styles = StyleSheet.create({
   },
   timeAgo: {
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: '500',
     minWidth: 30,
-    textAlign: "right",
+    textAlign: 'right',
     marginTop: 4,
   },
   price: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     marginBottom: 10,
   },
   description: {
@@ -192,13 +192,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   tagContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 3,
   },
   tag: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,

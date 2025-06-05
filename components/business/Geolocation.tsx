@@ -1,8 +1,8 @@
-import { haversineDistance } from "@/constants/Utils";
-import { useLocation } from "@/context/LocationContext";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import { haversineDistance } from '@/constants/Utils';
+import { useLocation } from '@/context/LocationContext';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -16,9 +16,9 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-} from "react-native";
+} from 'react-native';
 
-const GOOGLE_API_KEY = "AIzaSyC2wgrkz7bXl48td2VZXQVdTrc0-QPu-XI";
+const GOOGLE_API_KEY = 'AIzaSyC2wgrkz7bXl48td2VZXQVdTrc0-QPu-XI';
 
 interface GeolocationProps {
   visible: boolean;
@@ -26,16 +26,16 @@ interface GeolocationProps {
 }
 
 const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [predictions, setPredictions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const { userLocation, setSelectedLocation } = useLocation();
 
-  const primary = useThemeColor({}, "primary");
-  const text = useThemeColor({}, "text");
-  const background = useThemeColor({}, "background");
-  const border = useThemeColor({}, "border");
-  const secondary = useThemeColor({}, "secondary");
+  const primary = useThemeColor({}, 'primary');
+  const text = useThemeColor({}, 'text');
+  const background = useThemeColor({}, 'background');
+  const border = useThemeColor({}, 'border');
+  const secondary = useThemeColor({}, 'secondary');
 
   useEffect(() => {
     if (query.length > 2) {
@@ -58,7 +58,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
       );
       const json = await response.json();
 
-      if (json.status === "OK") {
+      if (json.status === 'OK') {
         if (userLocation) {
           const enriched = await Promise.all(
             json.predictions.map(async (item: any) => {
@@ -97,7 +97,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
         setPredictions([]);
       }
     } catch (error) {
-      console.error("Error fetching predictions:", error);
+      console.error('Error fetching predictions:', error);
     } finally {
       setLoading(false);
     }
@@ -120,15 +120,15 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
   };
 
   const handleClose = () => {
-    setQuery("");
+    setQuery('');
     setPredictions([]);
     onClose();
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} animationType='slide' transparent>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -136,8 +136,8 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
             <View style={styles.header}>
               <TouchableOpacity onPress={handleClose}>
                 <MaterialCommunityIcons
-                  name="chevron-down"
-                  size={18}
+                  name='chevron-down'
+                  size={20}
                   color={text}
                 />
               </TouchableOpacity>
@@ -148,7 +148,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
 
             <View style={[styles.searchContainer, { borderColor: border }]}>
               <MaterialIcons
-                name="search"
+                name='search'
                 size={18}
                 color={primary}
                 style={styles.searchIcon}
@@ -158,7 +158,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
                 style={[styles.input, { color: text }]}
                 value={query}
                 onChangeText={setQuery}
-                placeholder="Search for a place"
+                placeholder='Search for a place'
                 placeholderTextColor={secondary}
               />
             </View>
@@ -171,7 +171,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
               onPress={handleUseCurrentLocation}
             >
               <MaterialIcons
-                name="my-location"
+                name='my-location'
                 size={18}
                 color={primary}
                 style={{ marginRight: 8 }}
@@ -188,7 +188,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
               <FlatList
                 data={predictions}
                 keyExtractor={(item) => item.place_id}
-                keyboardShouldPersistTaps="handled"
+                keyboardShouldPersistTaps='handled'
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.predictionItem}
@@ -197,7 +197,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
                     <View style={styles.predictionRow}>
                       <View style={styles.iconContainer}>
                         <MaterialIcons
-                          name="location-on"
+                          name='location-on'
                           size={16}
                           color={border}
                         />
@@ -218,7 +218,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
                         <Text
                           style={[styles.secondaryText, { color: secondary }]}
                         >
-                          {item.structured_formatting?.secondary_text || ""}
+                          {item.structured_formatting?.secondary_text || ''}
                         </Text>
                       </View>
                     </View>
@@ -240,18 +240,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   headerText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     marginLeft: 10,
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -266,9 +266,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   currentLocationButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 12,
     borderWidth: 1,
     borderRadius: 8,
@@ -281,18 +281,18 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   predictionRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
 
   iconContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 12,
     marginTop: 3,
     width: 32,
@@ -300,12 +300,12 @@ const styles = StyleSheet.create({
 
   textContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
 
   primaryText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 
   secondaryText: {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   distanceText: {
     fontSize: 11,
     marginTop: 4,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
 

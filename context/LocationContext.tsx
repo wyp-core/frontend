@@ -1,5 +1,5 @@
-import * as Location from "expo-location";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import * as Location from 'expo-location';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export type LocationType = {
   lat: number;
@@ -29,10 +29,9 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const fetchLocation = async () => {
-      console.log("fetching...");
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
+        if (status !== 'granted') {
           setUserLocation(null);
           setSelectedLocation(null);
           return;
@@ -41,20 +40,20 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
         const lat = loc.coords.latitude;
         const lng = loc.coords.longitude;
 
-        let address = "Fetching address...";
+        let address = 'Fetching address...';
         try {
-          const apiKey = "AIzaSyC2wgrkz7bXl48td2VZXQVdTrc0-QPu-XI";
+          const apiKey = 'AIzaSyC2wgrkz7bXl48td2VZXQVdTrc0-QPu-XI';
           const res = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
           );
           const data = await res.json();
-          if (data.status === "OK" && data.results.length > 0) {
+          if (data.status === 'OK' && data.results.length > 0) {
             address = data.results[0].formatted_address;
           } else {
-            address = "Unknown location";
+            address = 'Unknown location';
           }
         } catch {
-          address = "Unable to fetch address";
+          address = 'Unable to fetch address';
         }
 
         const locationObj = { lat, lng, address };

@@ -13,9 +13,11 @@
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.3.0",
     "@expo/vector-icons": "^14.1.0",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/cli": "^18.0.0",
     "@react-native-community/datetimepicker": "github:react-native-community/datetimepicker",
     "@react-native-community/slider": "4.5.6",
+    "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.9",
@@ -49,6 +51,7 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
+    "react-native-ui-datepicker": "^3.1.2",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "zustand": "^5.0.5"
