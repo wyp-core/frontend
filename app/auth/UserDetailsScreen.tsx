@@ -1,12 +1,13 @@
-import DateSelector from "@/components/ui/DateSelector";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { useDefaultStyles } from "react-native-ui-datepicker";
+import DateSelector from '@/components/ui/DateSelector';
+import OptionButton from '@/components/ui/OptionButton';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useDefaultStyles } from 'react-native-ui-datepicker';
 
-type Gender = "Male" | "Female" | "Others";
+type Gender = 'Male' | 'Female' | 'Others';
 type GenderOption = {
   label: Gender;
   icon: keyof typeof MaterialIcons.glyphMap;
@@ -19,40 +20,40 @@ type UserFormData = {
 
 export default function UserDetailsScreen() {
   const [formData, setFormData] = useState<UserFormData>({
-    name: "",
+    name: '',
     dob: null,
     gender: null,
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const defaultStyles = useDefaultStyles();
   const router = useRouter();
 
-  const primary = useThemeColor({}, "primary");
-  const text = useThemeColor({}, "text");
-  const border = useThemeColor({}, "border");
-  const secondary = useThemeColor({}, "secondary");
-  const errorColor = useThemeColor({}, "error");
-  const theme = useThemeColor({}, "theme");
+  const primary = useThemeColor({}, 'primary');
+  const text = useThemeColor({}, 'text');
+  const border = useThemeColor({}, 'border');
+  const secondary = useThemeColor({}, 'secondary');
+  const errorColor = useThemeColor({}, 'error');
+  const theme = useThemeColor({}, 'theme');
 
   const genderOptions: GenderOption[] = [
-    { label: "Male", icon: "male" },
-    { label: "Female", icon: "female" },
-    { label: "Others", icon: "transgender" },
+    { label: 'Male', icon: 'male' },
+    { label: 'Female', icon: 'female' },
+    { label: 'Others', icon: 'transgender' },
   ];
 
   const handleSubmit = () => {
     if (formData.name && formData.dob && formData.gender) {
       router.push({
-        pathname: "/(tabs)",
+        pathname: '/(tabs)',
       });
     } else {
-      setError("Please fill all the fields");
+      setError('Please fill all the fields');
     }
   };
 
   const handleFormInputChange = (
-    field: "name" | "dob" | "gender",
+    field: 'name' | 'dob' | 'gender',
     value: string | Date
   ) => {
     setFormData((prev) => ({
@@ -60,7 +61,7 @@ export default function UserDetailsScreen() {
       [field]: value,
     }));
 
-    setError("");
+    setError('');
   };
 
   return (
@@ -76,10 +77,10 @@ export default function UserDetailsScreen() {
       <View style={[styles.inputContainer, { borderColor: border }]}>
         <TextInput
           style={[styles.input, { color: text }]}
-          placeholder="Enter Name"
+          placeholder='Enter Name'
           placeholderTextColor={secondary}
           value={formData.name}
-          onChangeText={(value) => handleFormInputChange("name", value)}
+          onChangeText={(value) => handleFormInputChange('name', value)}
           cursorColor={primary}
         />
       </View>
@@ -97,7 +98,7 @@ export default function UserDetailsScreen() {
         <Text style={{ color: formData.dob ? text : secondary, fontSize: 14 }}>
           {formData.dob
             ? new Date(formData.dob).toLocaleDateString()
-            : "Select Date of Birth"}
+            : 'Select Date of Birth'}
         </Text>
       </Pressable>
 
@@ -109,7 +110,7 @@ export default function UserDetailsScreen() {
         minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
         onDateChange={(date: Date) => {
           console.log(date);
-          handleFormInputChange("dob", date);
+          handleFormInputChange('dob', date);
           setShowDatePicker(false);
         }}
         onClose={() => setShowDatePicker(false)}
@@ -118,30 +119,13 @@ export default function UserDetailsScreen() {
 
       <View style={[styles.genderContainer, { borderColor: border }]}>
         {genderOptions.map(({ label, icon }) => (
-          <Pressable
+          <OptionButton
             key={label}
-            style={[
-              styles.genderTab,
-              {
-                borderColor: formData.gender === label ? primary : border,
-              },
-            ]}
-            onPress={() => handleFormInputChange("gender", label)}
-          >
-            <MaterialIcons
-              name={icon}
-              color={formData.gender === label ? primary : text}
-              size={18}
-            />
-            <Text
-              style={[
-                styles.genderText,
-                { color: formData.gender === label ? primary : text },
-              ]}
-            >
-              {label}
-            </Text>
-          </Pressable>
+            item={label}
+            selected={formData.gender === label}
+            iconName={icon}
+            onPress={(val) => handleFormInputChange('gender', val)}
+          />
         ))}
       </View>
 
@@ -155,7 +139,7 @@ export default function UserDetailsScreen() {
         style={[styles.button, { backgroundColor: primary }]}
         onPress={handleSubmit}
       >
-        <Text style={[styles.buttonText, { color: "#fff" }]}>Submit</Text>
+        <Text style={[styles.buttonText, { color: '#fff' }]}>Submit</Text>
       </Pressable>
     </View>
   );
@@ -166,19 +150,19 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     paddingTop: 100,
-    flexDirection: "column",
+    flexDirection: 'column',
     gap: 24,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   subtitle: {
     fontSize: 14,
   },
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderRadius: 8,
     height: 45,
@@ -190,22 +174,22 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   genderContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderRadius: 8,
     gap: 12,
   },
   genderTab: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 8,
     borderRadius: 6,
     borderWidth: 1,
@@ -221,10 +205,10 @@ const styles = StyleSheet.create({
   button: {
     padding: 12,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonText: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 14,
   },
 });

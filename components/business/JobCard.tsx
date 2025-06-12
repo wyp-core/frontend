@@ -15,7 +15,7 @@ interface JobCardProps {
   createdAt: number;
 }
 
-export default function JobCard({
+const JobCard = ({
   title,
   lat,
   lon,
@@ -25,7 +25,7 @@ export default function JobCard({
   mode,
   views,
   createdAt,
-}: JobCardProps) {
+}: JobCardProps) => {
   const primary = useThemeColor({}, 'primary');
   const text = useThemeColor({}, 'text');
   const background = useThemeColor({}, 'background');
@@ -49,7 +49,7 @@ export default function JobCard({
           </View>
           <View style={{ marginLeft: 12, flexShrink: 1 }}>
             <Text style={[styles.title, { color: text }]}>
-              {title.toLowerCase()}
+              {'to ' + title.toLowerCase()}
             </Text>
             <Text style={[styles.location, { color: secondary }]}>
               {lat} {lon}
@@ -114,7 +114,9 @@ export default function JobCard({
               color={primary}
             />
           )}
-          <Text style={[styles.tagText, { color: text }]}>{mode}</Text>
+          <Text style={[styles.tagText, { color: text }]}>
+            {mode.charAt(0).toUpperCase() + mode.slice(1)}
+          </Text>
         </View>
 
         <View
@@ -129,7 +131,7 @@ export default function JobCard({
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   card: {
@@ -195,13 +197,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 3,
+    justifyContent: 'space-between',
   },
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 5,
     marginRight: 4,
     marginTop: 4,
@@ -211,3 +214,5 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
 });
+
+export default JobCard;

@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-export default function JobInputSection({
+const JobInputSection = ({
   onFocusChange,
 }: {
   onFocusChange: (isEditing: boolean) => void;
-}) {
-  const background = useThemeColor({}, "background");
-  const text = useThemeColor({}, "text");
-  const secondary = useThemeColor({}, "secondary");
-  const border = useThemeColor({}, "border");
+}) => {
+  const background = useThemeColor({}, 'background');
+  const text = useThemeColor({}, 'text');
+  const secondary = useThemeColor({}, 'secondary');
+  const border = useThemeColor({}, 'border');
 
   const [isEditing, setIsEditing] = useState(false);
-  const [userText, setUserText] = useState("");
+  const [userText, setUserText] = useState('');
 
   const handlePress = () => {
     setIsEditing(true);
@@ -37,7 +37,7 @@ export default function JobInputSection({
           <TextInput
             value={userText}
             onChangeText={setUserText}
-            placeholder="Describe the task someone might hire you for..."
+            placeholder='Describe the task someone might hire you for...'
             placeholderTextColor={secondary}
             style={[styles.input, { color: text }]}
             autoFocus
@@ -53,7 +53,7 @@ export default function JobInputSection({
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
 
   heading: {
     fontSize: 28,
-    fontWeight: "500",
+    fontWeight: '500',
     marginBottom: 16,
   },
 
@@ -74,20 +74,22 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 0.6,
     minHeight: 140,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
 
   input: {
     fontSize: 18,
-    fontWeight: "400",
+    fontWeight: '400',
     lineHeight: 26,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
     minHeight: 100,
   },
 
   placeholderText: {
     fontSize: 18,
-    fontStyle: "italic",
+    fontStyle: 'italic',
     lineHeight: 26,
   },
 });
+
+export default JobInputSection;

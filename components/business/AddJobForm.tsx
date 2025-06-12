@@ -1,11 +1,12 @@
-import DurationPickerModal from "@/components/ui/DurationPickerModal";
-import { LocationType, useLocation } from "@/context/LocationContext";
+import DurationPickerModal from '@/components/ui/DurationPickerModal';
+import { LocationType, useLocation } from '@/context/LocationContext';
 
-import { useAddJob } from "@/hooks/jobApi";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { useAddJob } from '@/hooks/jobs/useAddJob';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { modeOptions } from '@/types/job';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -18,46 +19,47 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import ConfirmationModal from "../ui/ConfirmationModal";
-import DateSelector from "../ui/DateSelector";
-import Geolocation from "./Geolocation";
+} from 'react-native';
+import ConfirmationModal from '../ui/ConfirmationModal';
+import DateSelector from '../ui/DateSelector';
+import OptionButton from '../ui/OptionButton';
+import Geolocation from './Geolocation';
 
-type ModeType = "remote" | "onsite" | "both";
+type ModeType = 'remote' | 'onsite' | 'hybrid';
 
-export default function AddJobForm() {
+const AddJobForm = () => {
   const { selectedLocation } = useLocation();
   const navigation = useNavigation<any>();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [hasDeadline, setHasDeadline] = useState(false);
   const [deadline, setDeadline] = useState<Date>(new Date());
-  const [mode, setMode] = useState<ModeType>("both");
-  const [budget, setBudget] = useState("");
-  const [durationValue, setDurationValue] = useState("");
+  const [mode, setMode] = useState<ModeType>('hybrid');
+  const [budget, setBudget] = useState('');
+  const [durationValue, setDurationValue] = useState('');
   const [location, setLocation] = useState<LocationType | null>();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [showDurationModal, setShowDurationModal] = useState(false);
-  const [selectedDurationUnit, setSelectedDurationUnit] = useState("days");
+  const [selectedDurationUnit, setSelectedDurationUnit] = useState('days');
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showGeolocationModal, setShowGeolocationModal] = useState(false);
 
-  const primary = useThemeColor({}, "primary");
-  const secondary = useThemeColor({}, "secondary");
-  const text = useThemeColor({}, "text");
-  const border = useThemeColor({}, "border");
-  const error = useThemeColor({}, "error");
+  const primary = useThemeColor({}, 'primary');
+  const secondary = useThemeColor({}, 'secondary');
+  const text = useThemeColor({}, 'text');
+  const border = useThemeColor({}, 'border');
+  const error = useThemeColor({}, 'error');
 
   const { mutate: addJob, isPending } = useAddJob();
   const resetForm = () => {
-    setTitle("");
-    setDescription("");
+    setTitle('');
+    setDescription('');
     setHasDeadline(false);
     setDeadline(new Date());
-    setMode("both");
-    setBudget("");
-    setDurationValue("");
+    setMode('hybrid');
+    setBudget('');
+    setDurationValue('');
     setErrors({});
   };
 
@@ -66,12 +68,12 @@ export default function AddJobForm() {
   };
   const cancelHandler = () => {
     setShowConfirmationModal(false);
-    navigation.navigate("index");
+    navigation.navigate('index');
   };
 
   const handleDateChange = (selectedDate: Date) => {
     setDeadline(selectedDate);
-    setErrors({ ...errors, deadline: "" });
+    setErrors({ ...errors, deadline: '' });
     setHasDeadline(true);
   };
 
@@ -80,19 +82,19 @@ export default function AddJobForm() {
       setIsDatePickerVisible(true);
     } else {
       setHasDeadline(false);
-      setErrors({ ...errors, deadline: "" });
+      setErrors({ ...errors, deadline: '' });
     }
   };
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!title.trim()) newErrors.title = "Job title is required";
-    if (!description.trim()) newErrors.description = "Description is required";
+    if (!title.trim()) newErrors.title = 'Job title is required';
+    if (!description.trim()) newErrors.description = 'Description is required';
     if (hasDeadline && !deadline)
-      newErrors.deadline = "Deadline date is required";
-    if (!budget.trim()) newErrors.budget = "Budget is required";
-    if (!durationValue.trim()) newErrors.duration = "Duration is required";
-    if (!location) newErrors.location = "Location is required";
+      newErrors.deadline = 'Deadline date is required';
+    if (!budget.trim()) newErrors.budget = 'Budget is required';
+    if (!durationValue.trim()) newErrors.duration = 'Duration is required';
+    if (!location) newErrors.location = 'Location is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -102,13 +104,13 @@ export default function AddJobForm() {
     if (validate()) {
       const duration = `${durationValue} ${selectedDurationUnit}`;
       const payload = {
-        createdBy: "b27c70a3-4575-4ed5-a52e-1ee9d07dbc4b",
+        createdBy: 'b27c70a3-4575-4ed5-a52e-1ee9d07dbc4b',
         title,
         description,
         lat: location?.lat,
-        lng: location?.lng,
+        lon: location?.lng,
         price: parseFloat(budget),
-        category: "Web Development",
+        category: 'Web Development',
         mode: mode.toLowerCase(),
         duration,
       };
@@ -124,9 +126,9 @@ export default function AddJobForm() {
         },
         onError: () => {
           Alert.alert(
-            "Error",
-            "Could not save the job. Please try again later.",
-            [{ text: "OK" }]
+            'Error',
+            'Could not save the job. Please try again later.',
+            [{ text: 'OK' }]
           );
         },
       });
@@ -134,7 +136,7 @@ export default function AddJobForm() {
   };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("blur", () => {
+    const unsubscribe = navigation.addListener('blur', () => {
       resetForm();
     });
 
@@ -148,20 +150,20 @@ export default function AddJobForm() {
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
-      behavior={"height"}
+      behavior={'height'}
       keyboardVerticalOffset={0}
     >
       <Text style={[styles.header, { color: text }]}>
-        What's your{" "}
-        <Text style={[styles.headerHighlight, { color: primary }]}>price</Text>{" "}
+        What's your{' '}
+        <Text style={[styles.headerHighlight, { color: primary }]}>price</Text>{' '}
         to
       </Text>
       <ScrollView
         contentContainerStyle={[
           styles.container,
-          { flexGrow: 1, justifyContent: "space-between" },
+          { flexGrow: 1, justifyContent: 'space-between' },
         ]}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps='handled'
       >
         <View>
           <TextInput
@@ -170,12 +172,12 @@ export default function AddJobForm() {
               { color: text, borderColor: border, marginBottom: 4 },
             ]}
             maxLength={50}
-            placeholder="Short description (e.g., do my taxes?)"
+            placeholder='Short description (e.g., do my taxes?)'
             placeholderTextColor={secondary}
             value={title}
             onChangeText={(text) => {
               setTitle(text);
-              setErrors({ ...errors, title: "" });
+              setErrors({ ...errors, title: '' });
             }}
           />
           <View style={styles.infoRow}>
@@ -183,7 +185,7 @@ export default function AddJobForm() {
             <Text
               style={[
                 styles.charCount,
-                { color: title.length >= 45 ? "red" : secondary },
+                { color: title.length >= 45 ? 'red' : secondary },
               ]}
             >
               {title.length}/50
@@ -198,12 +200,12 @@ export default function AddJobForm() {
             ]}
             multiline
             maxLength={500}
-            placeholder="Describe what needs to be done"
+            placeholder='Describe what needs to be done'
             placeholderTextColor={secondary}
             value={description}
             onChangeText={(text) => {
               setDescription(text);
-              setErrors({ ...errors, description: "" });
+              setErrors({ ...errors, description: '' });
             }}
           />
           <View style={styles.infoRow}>
@@ -223,18 +225,18 @@ export default function AddJobForm() {
           <View style={styles.row}>
             <Text style={[styles.label, { color: text }]}>
               {hasDeadline && deadline
-                ? `Deadline: ${deadline.toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
+                ? `Deadline: ${deadline.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
                   })}`
-                : "Is there a deadline?"}
+                : 'Is there a deadline?'}
             </Text>
             <Switch
               value={hasDeadline}
               onValueChange={handleToggleDeadline}
               trackColor={{ true: primary, false: border }}
-              thumbColor={"#f4f4f4"}
+              thumbColor={'#f4f4f4'}
             />
           </View>
 
@@ -248,71 +250,38 @@ export default function AddJobForm() {
           />
 
           <View style={styles.optionsRow}>
-            {["remote", "onsite", "both"].map((item) => (
-              <Pressable
-                key={item}
-                style={[
-                  styles.optionButton,
-                  { borderColor: border },
-                  mode === item && {
-                    borderColor: primary,
-                    borderWidth: 1,
-                  },
-                ]}
-                onPress={() => setMode(item as ModeType)}
-              >
-                {item === "onsite" ? (
-                  <MaterialCommunityIcons
-                    name="map-marker-outline"
-                    size={16}
-                    color={mode === item ? primary : text}
-                  />
-                ) : (
-                  <MaterialIcons
-                    name={
-                      item === "remote"
-                        ? "wifi"
-                        : item === "onsite"
-                        ? "location-on"
-                        : "public"
-                    }
-                    size={16}
-                    color={mode === item ? primary : text}
-                  />
-                )}
-                <Text
-                  style={[
-                    styles.optionText,
-                    { color: text },
-                    mode === item && {
-                      color: primary,
-                    },
-                  ]}
-                >
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
-                </Text>
-              </Pressable>
+            {modeOptions.map(({ key, icon }) => (
+              <OptionButton
+                key={key}
+                item={key}
+                selected={mode === key}
+                iconName={icon}
+                onPress={(val) => setMode(val as ModeType)}
+                displayFunction={(val: string) =>
+                  val.charAt(0).toUpperCase() + val.slice(1)
+                }
+              />
             ))}
           </View>
 
           <View style={styles.budgetDurationRow}>
-            <View style={{ flex: 1, flexDirection: "column" }}>
+            <View style={{ flex: 1, flexDirection: 'column' }}>
               <Text style={[styles.inputLabel, { color: text }]}>
                 Budget (INR)
               </Text>
               <TextInput
                 style={[styles.input, { color: text, borderColor: border }]}
-                keyboardType="numeric"
-                placeholder="e.g., 5000"
+                keyboardType='numeric'
+                placeholder='e.g., 5000'
                 placeholderTextColor={secondary}
                 value={budget}
                 onChangeText={(text) => {
                   setBudget(text);
-                  setErrors({ ...errors, budget: "" });
+                  setErrors({ ...errors, budget: '' });
                 }}
               />
             </View>
-            <View style={{ flex: 1, flexDirection: "column", marginLeft: 12 }}>
+            <View style={{ flex: 1, flexDirection: 'column', marginLeft: 12 }}>
               <Text style={[styles.inputLabel, { color: text }]}>Duration</Text>
               <View style={styles.durationRow}>
                 <TextInput
@@ -321,13 +290,13 @@ export default function AddJobForm() {
                     styles.durationInput,
                     { color: text, borderColor: border },
                   ]}
-                  keyboardType="numeric"
-                  placeholder="2"
+                  keyboardType='numeric'
+                  placeholder='2'
                   placeholderTextColor={secondary}
                   value={durationValue}
                   onChangeText={(text) => {
                     setDurationValue(text);
-                    setErrors({ ...errors, duration: "" });
+                    setErrors({ ...errors, duration: '' });
                   }}
                 />
                 <TouchableOpacity
@@ -342,7 +311,7 @@ export default function AddJobForm() {
                     {selectedDurationUnit}
                   </Text>
                   <MaterialIcons
-                    name="arrow-drop-down"
+                    name='arrow-drop-down'
                     size={20}
                     color={secondary}
                   />
@@ -373,12 +342,12 @@ export default function AddJobForm() {
                 {
                   borderColor: border,
                   paddingVertical: 12,
-                  width: "100%",
+                  width: '100%',
                 },
               ]}
               onPress={() => {
                 setShowGeolocationModal(true);
-                setErrors({ ...errors, location: "" });
+                setErrors({ ...errors, location: '' });
               }}
             >
               <Text
@@ -386,12 +355,12 @@ export default function AddJobForm() {
                   color: text,
                   flex: 1,
                   fontSize: 14,
-                  overflow: "hidden",
+                  overflow: 'hidden',
                 }}
                 numberOfLines={1}
-                ellipsizeMode="tail"
+                ellipsizeMode='tail'
               >
-                {location?.address || "Select location"}
+                {location?.address || 'Select location'}
               </Text>
             </Pressable>
           </View>
@@ -410,10 +379,10 @@ export default function AddJobForm() {
           onPress={handleSubmit}
           disabled={isPending}
         >
-          <Text style={[styles.submitText, { color: "#fff", opacity: 1 }]}>
+          <Text style={[styles.submitText, { color: '#fff', opacity: 1 }]}>
             Post Job
           </Text>
-          {isPending && <ActivityIndicator size="small" color="#fff" />}
+          {isPending && <ActivityIndicator size='small' color='#fff' />}
         </Pressable>
       </ScrollView>
 
@@ -429,13 +398,13 @@ export default function AddJobForm() {
       <ConfirmationModal
         visible={showConfirmationModal}
         message={
-          "Your job has been successfully posted and will be live shortly!"
+          'Your job has been successfully posted and will be live shortly!'
         }
-        title={"Job Posted Successfully"}
+        title={'Job Posted Successfully'}
         onConfirm={confirmHandler}
         onCancel={cancelHandler}
-        confirmButtonText="Create new"
-        cancelButtonText="Return to home"
+        confirmButtonText='Create new'
+        cancelButtonText='Return to home'
       />
 
       <Geolocation
@@ -444,7 +413,7 @@ export default function AddJobForm() {
       />
     </KeyboardAvoidingView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -452,12 +421,12 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 20,
-    fontWeight: "800",
+    fontWeight: '800',
     padding: 24,
     paddingBottom: 16,
   },
   headerHighlight: {
-    fontWeight: "900",
+    fontWeight: '900',
   },
   input: {
     borderWidth: 1,
@@ -468,36 +437,36 @@ const styles = StyleSheet.create({
   },
   multilineInput: {
     height: 130,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
     marginBottom: 12,
   },
   charCount: {
     fontSize: 12,
-    textAlign: "right",
+    textAlign: 'right',
     marginBottom: 8,
     flex: 1,
-    textAlignVertical: "center",
+    textAlignVertical: 'center',
   },
   error: {
-    color: "red",
+    color: 'red',
     fontSize: 12,
     marginTop: -4,
     marginBottom: 10,
-    textAlign: "left",
+    textAlign: 'left',
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 4,
   },
   label: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   datePickerButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
     paddingVertical: 14,
     paddingHorizontal: 16,
@@ -506,20 +475,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   dateText: {
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 14,
   },
   optionsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 16,
     gap: 16,
   },
   optionButton: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 10,
     borderWidth: 1,
     borderRadius: 8,
@@ -527,94 +496,94 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   budgetRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
     gap: 10,
   },
   inr: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   locationButton: {
     paddingHorizontal: 12,
     paddingVertical: 12,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginLeft: 8,
     borderRadius: 12,
   },
   useLocationText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   submitButton: {
     marginTop: 6,
     paddingVertical: 12,
     borderRadius: 12,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
     marginBottom: 24,
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     gap: 16,
   },
   submitText: {
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 16,
-    color: "#fff",
+    color: '#fff',
   },
   rowLabel: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 4,
     paddingHorizontal: 2,
   },
   inputLabel: {
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 14,
     flex: 1,
-    textAlign: "left",
+    textAlign: 'left',
     marginBottom: 6,
     marginLeft: 2,
   },
   budgetDurationRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   locationRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 4,
-    width: "100%",
+    width: '100%',
   },
   infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   durationRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   dropdown: {
     borderWidth: 1,
     borderRadius: 6,
     paddingHorizontal: 12,
-    justifyContent: "space-between",
-    flexDirection: "row",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 4,
   },
   dropdownText: {
     fontSize: 13,
-    textAlign: "center",
+    textAlign: 'center',
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -626,17 +595,19 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   durationInput: {
-    width: "40%",
+    width: '40%',
     height: 40,
     marginRight: 8,
-    textAlign: "center",
+    textAlign: 'center',
   },
   durationSelector: {
     flex: 1,
     height: 40,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   errorBorder: {
-    borderColor: "red",
+    borderColor: 'red',
   },
 });
+
+export default AddJobForm;

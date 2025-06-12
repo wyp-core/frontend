@@ -1,11 +1,12 @@
-import { addJob, FetchJobsPayload, getJobs, JobInput } from '@/api/job';
+import { addJob } from '@/api/job';
+import { CreateJobPayload } from '@/types/job';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useAddJob = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (data: JobInput) => addJob(data),
+    mutationFn: (data: CreateJobPayload) => addJob(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       console.log('Job added successfully');
@@ -16,10 +17,4 @@ export const useAddJob = () => {
   });
 
   return mutation;
-};
-
-export const useFetchJobs = () => {
-  return useMutation({
-    mutationFn: (data: FetchJobsPayload) => getJobs(data),
-  });
 };

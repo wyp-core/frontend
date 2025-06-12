@@ -1,57 +1,63 @@
-import { useFetchJobs } from "@/hooks/jobApi";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useCallback, useEffect, useState } from "react";
+import { useLocation } from '@/context/LocationContext';
+import { useFetchJobs } from '@/hooks/jobs/useFetchJobs';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
   Image,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import JobCard from "./JobCard";
+} from 'react-native';
+import JobCardSkeleton from '../ui/JobCardSkeleton';
+import JobCard from './JobCard';
 
-export default function JobList({ filters }: { filters: any }) {
-  const primary = useThemeColor({}, "primary");
-  const text = useThemeColor({}, "text");
-  const secondary = useThemeColor({}, "secondary");
+const JobList = ({ filters }: { filters: any }) => {
+  const primary = useThemeColor({}, 'primary');
+  const text = useThemeColor({}, 'text');
+  const secondary = useThemeColor({}, 'secondary');
 
   const [offset, setOffset] = useState(0);
   const [jobList, setJobList] = useState<any[]>([]);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchJobs = useFetchJobs();
+  const { userLocation } = useLocation();
 
   const handleFetchJobs = useCallback(() => {
+    console.log(userLocation);
+    if (!userLocation) return;
     const payload = {
       ...filters,
       limit: 10,
       offset,
-      sort: null,
-      radius: null,
+      sortBy: 'radius_asc',
+      radius: 100,
+      lat: userLocation?.lat,
+      lon: userLocation?.lng,
     };
 
     fetchJobs.mutate(payload, {
       onSuccess: (newJobs: any[]) => {
         setJobList((prev) => (offset === 0 ? newJobs : [...prev, ...newJobs]));
-        setIsRefreshing(false);
       },
       onError: () => {
         setJobList([]);
-        setIsRefreshing(false);
       },
     });
-  }, [offset, filters, fetchJobs]);
+  }, [offset, filters, fetchJobs, userLocation]);
 
   useEffect(() => {
     handleFetchJobs();
   }, [offset, filters]);
 
   const handleRefresh = useCallback(() => {
-    setIsRefreshing(true);
-    setOffset(0);
-  }, []);
+    if (offset > 0) {
+      setOffset(0);
+    } else {
+      handleFetchJobs();
+    }
+  }, [offset, handleFetchJobs]);
 
   const handleScroll = (event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -65,8 +71,10 @@ export default function JobList({ filters }: { filters: any }) {
 
   if (fetchJobs.isPending && jobList.length === 0) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={primary} />
+      <View style={styles.skeletonContainer}>
+        {[...Array(5)].map((_, index) => (
+          <JobCardSkeleton key={index} />
+        ))}
       </View>
     );
   }
@@ -75,9 +83,9 @@ export default function JobList({ filters }: { filters: any }) {
     return (
       <View style={styles.errorContainer}>
         <Image
-          source={require("@/assets/images/No connection-pana.svg")}
+          source={require('@/assets/images/No connection-pana.svg')}
           style={styles.errorImage}
-          resizeMode="contain"
+          resizeMode='contain'
         />
         <Text style={styles.errorTitle}>No Internet Connection</Text>
         <Text style={styles.errorSubtitle}>
@@ -106,7 +114,7 @@ export default function JobList({ filters }: { filters: any }) {
       scrollEventThrottle={16}
       refreshControl={
         <RefreshControl
-          refreshing={isRefreshing}
+          refreshing={fetchJobs.isPending}
           onRefresh={handleRefresh}
           colors={[primary]}
         />
@@ -115,16 +123,9 @@ export default function JobList({ filters }: { filters: any }) {
       {jobList.map((job: any) => (
         <JobCard key={job.jobID} {...job} />
       ))}
-      {fetchJobs.isPending && !isRefreshing && (
-        <ActivityIndicator
-          size="small"
-          color={primary}
-          style={styles.spinner}
-        />
-      )}
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -136,13 +137,13 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorImage: {
     width: 200,
@@ -151,16 +152,43 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 8,
-    textAlign: "center",
+    textAlign: 'center',
   },
   errorSubtitle: {
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
     lineHeight: 20,
   },
   spinner: {
     marginVertical: 16,
   },
+  skeletonContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  skeletonCard: {
+    height: 100,
+    marginBottom: 16,
+    borderRadius: 12,
+    backgroundColor: '#e0e0e0',
+    overflow: 'hidden',
+  },
+  skeletonBase: {
+    flex: 1,
+    position: 'relative',
+  },
+  shimmerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#f0f0f0',
+    opacity: 0.5,
+    width: '100%',
+  },
 });
+
+export default JobList;

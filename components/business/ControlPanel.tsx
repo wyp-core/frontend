@@ -11,13 +11,13 @@ import {
 } from 'react-native';
 import Filters from './Filters';
 
-export default function ControlPanel({
+const ControlPanel = ({
   initialFilters,
   onApply,
 }: {
   initialFilters: any;
   onApply: (filters: any) => void;
-}) {
+}) => {
   const [search, setSearch] = useState('');
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -118,7 +118,7 @@ export default function ControlPanel({
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -174,3 +174,5 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
 });
+
+export default ControlPanel;
