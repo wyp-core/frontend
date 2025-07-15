@@ -1,7 +1,7 @@
-import { useLocation } from '@/context/LocationContext';
-import { useFetchJobs } from '@/hooks/jobs/useFetchJobs';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { useCallback, useEffect, useState } from 'react';
+import { useLocation } from "@/context/LocationContext";
+import { useFetchJobs } from "@/hooks/jobs/useFetchJobs";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useCallback, useEffect, useState } from "react";
 import {
   Image,
   RefreshControl,
@@ -9,32 +9,33 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import JobCardSkeleton from '../ui/JobCardSkeleton';
-import JobCard from './JobCard';
+} from "react-native";
+import JobCardSkeleton from "../ui/CardSkeleton";
+import JobCard from "./JobCard";
+import JobDescriptionModal from "./JobDescriptionModal";
 
 const JobList = ({ filters }: { filters: any }) => {
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const secondary = useThemeColor({}, 'secondary');
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const secondary = useThemeColor({}, "secondary");
 
   const [offset, setOffset] = useState(0);
   const [jobList, setJobList] = useState<any[]>([]);
+  const [selectedJob, setSelectedJob] = useState();
 
   const fetchJobs = useFetchJobs();
   const { userLocation } = useLocation();
 
   const handleFetchJobs = useCallback(() => {
-    console.log(userLocation);
     if (!userLocation) return;
     const payload = {
       ...filters,
       limit: 10,
       offset,
-      sortBy: 'radius_asc',
+      sortBy: "radius_asc",
       radius: 100,
       lat: userLocation?.lat,
-      lon: userLocation?.lng,
+      lon: userLocation?.lon,
     };
 
     fetchJobs.mutate(payload, {
@@ -83,9 +84,9 @@ const JobList = ({ filters }: { filters: any }) => {
     return (
       <View style={styles.errorContainer}>
         <Image
-          source={require('@/assets/images/No connection-pana.svg')}
+          source={require("@/assets/images/No connection-pana.svg")}
           style={styles.errorImage}
-          resizeMode='contain'
+          resizeMode="contain"
         />
         <Text style={styles.errorTitle}>No Internet Connection</Text>
         <Text style={styles.errorSubtitle}>
@@ -121,8 +122,16 @@ const JobList = ({ filters }: { filters: any }) => {
       }
     >
       {jobList.map((job: any) => (
-        <JobCard key={job.jobID} {...job} />
+        <JobCard key={job.jobID} {...job} onPress={() => setSelectedJob(job)} />
       ))}
+
+      {selectedJob && (
+        <JobDescriptionModal
+          visible={true}
+          job={selectedJob}
+          onClose={() => setSelectedJob(undefined)}
+        />
+      )}
     </ScrollView>
   );
 };
@@ -137,13 +146,13 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorImage: {
     width: 200,
@@ -152,13 +161,13 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorSubtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 20,
   },
   spinner: {
@@ -172,22 +181,22 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 16,
     borderRadius: 12,
-    backgroundColor: '#e0e0e0',
-    overflow: 'hidden',
+    backgroundColor: "#e0e0e0",
+    overflow: "hidden",
   },
   skeletonBase: {
     flex: 1,
-    position: 'relative',
+    position: "relative",
   },
   shimmerOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     opacity: 0.5,
-    width: '100%',
+    width: "100%",
   },
 });
 

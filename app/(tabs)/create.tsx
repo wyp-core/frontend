@@ -1,6 +1,6 @@
 import React from "react";
 
-import AddJobForm from "@/components/business/AddJobForm";
+import AddJobForm from "@/components/business/AddJobForm/AddJobForm";
 import GradientScreen from "@/components/ui/GradientScreen";
 import { StyleSheet } from "react-native";
 

@@ -1,3 +1,4 @@
+import { useFetchOTP } from "@/hooks/user/useFetchOTP";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -12,6 +13,7 @@ import {
   Text,
   TextInput,
   View,
+  ActivityIndicator,
 } from "react-native";
 
 const LoginScreen = () => {
@@ -20,7 +22,6 @@ const LoginScreen = () => {
     number: "",
   });
   const [error, setError] = useState("");
-
   const router = useRouter();
 
   const primary = useThemeColor({}, "primary");
@@ -29,18 +30,36 @@ const LoginScreen = () => {
   const secondary = useThemeColor({}, "secondary");
   const errorColor = useThemeColor({}, "error");
 
-  const handleNext = () => {
+  const { mutateAsync: requestOTP, isPending } = useFetchOTP();
+
+  const handleNext = async () => {
     if (mobileNumber.number.length !== 10) {
       setError("Please enter a valid mobile number");
-    } else {
-      setError("");
-      router.push({
-        pathname: "/auth/OTPScreen",
-        params: {
-          number: mobileNumber.number,
-          countryCode: mobileNumber.countryCode,
-        },
+      return;
+    }
+
+    setError("");
+
+    try {
+      const res = await requestOTP({
+        phone: mobileNumber.number,
+        countryCode: mobileNumber.countryCode,
       });
+
+      if (res?.status === 200) {
+        router.push({
+          pathname: "/auth/OTPScreen",
+          params: {
+            number: mobileNumber.number,
+            countryCode: mobileNumber.countryCode,
+          },
+        });
+      } else {
+        setError(res.error || "OTP request failed");
+      }
+    } catch (error: any) {
+      setError(error.message || "OTP request failed");
+      console.error("OTP request failed:", error);
     }
   };
 
@@ -118,10 +137,27 @@ const LoginScreen = () => {
               </Text>
             ) : null}
             <Pressable
-              style={[styles.button, { backgroundColor: primary }]}
+              style={[
+                styles.button,
+                {
+                  backgroundColor:
+                    mobileNumber.number.length === 10 ? primary : border,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
               onPress={handleNext}
+              disabled={isPending}
             >
               <Text style={styles.buttonText}>Verify using OTP</Text>
+              {isPending && (
+                <ActivityIndicator
+                  size="small"
+                  color="#fff"
+                  style={{ marginLeft: 8 }}
+                />
+              )}
             </Pressable>
           </View>
 
@@ -182,14 +218,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: "Montserrat_700Bold",
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
     textAlign: "center",
-    marginTop: 6,
+    marginTop: 2,
     marginBottom: 24,
+    fontFamily: "Montserrat_500Medium",
   },
   inputContainer: {
     flexDirection: "row",
@@ -203,6 +240,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     fontSize: 16,
+    fontFamily: "Montserrat_500Medium",
   },
   mobileInputContainer: {
     flex: 1,
@@ -215,6 +253,7 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     flex: 1,
+    fontFamily: "Montserrat_500Medium",
   },
   crossIcon: {
     padding: 12,
@@ -227,19 +266,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 12,
+    fontFamily: "Montserrat_500Medium",
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "Montserrat_600SemiBold",
   },
   termsText: {
     fontSize: 12,
     textAlign: "center",
     marginBottom: 50,
+    fontFamily: "Montserrat_500Medium",
   },
   errorText: {
     fontSize: 12,
     marginBottom: 4,
+    fontFamily: "Montserrat_500Medium",
   },
 });
 

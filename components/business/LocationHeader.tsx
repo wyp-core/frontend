@@ -11,7 +11,7 @@ const LocationHeader: React.FC = () => {
   const secondary = useThemeColor({}, "secondary");
   const text = useThemeColor({}, "text");
   const [modalVisible, setModalVisible] = useState(false);
-  const { selectedLocation } = useLocation();
+  const { userLocation } = useLocation();
 
   return (
     <View style={styles.container}>
@@ -21,7 +21,7 @@ const LocationHeader: React.FC = () => {
       >
         <MaterialIcons name="location-on" size={18} color={primary} />
         <Text style={[styles.locationText, { color: text }]} numberOfLines={1}>
-          {selectedLocation?.address || "Fetching location..."}
+          {userLocation?.address || "Fetching location..."}
         </Text>
         <MaterialCommunityIcons
           name="chevron-down"

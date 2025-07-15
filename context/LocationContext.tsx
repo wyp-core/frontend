@@ -1,9 +1,9 @@
-import * as Location from 'expo-location';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import * as Location from "expo-location";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 export type LocationType = {
   lat: number;
-  lng: number;
+  lon: number;
   address: string;
 };
 
@@ -34,7 +34,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchLocation = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
+        if (status !== "granted") {
           setUserLocation(null);
           setSelectedLocation(null);
           return;
@@ -42,26 +42,26 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const loc = await Location.getCurrentPositionAsync({});
         const lat = loc.coords.latitude;
-        const lng = loc.coords.longitude;
+        const lon = loc.coords.longitude;
 
-        let address = 'Fetching address...';
+        let address = "Fetching address...";
         try {
-          const apiKey = 'AIzaSyC2wgrkz7bXl48td2VZXQVdTrc0-QPu-XI'; // Replace with secure env usage
+          const apiKey = "AIzaSyC2wgrkz7bXl48td2VZXQVdTrc0-QPu-XI";
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`
           );
           const data = await response.json();
 
-          if (data.status === 'OK' && data.results.length > 0) {
+          if (data.status === "OK" && data.results.length > 0) {
             address = data.results[0].formatted_address;
           } else {
-            address = 'Unknown location';
+            address = "Unknown location";
           }
         } catch (err) {
-          address = 'Unable to fetch address';
+          address = "Unable to fetch address";
         }
 
-        const locationObj = { lat, lng, address };
+        const locationObj = { lat, lon, address };
         setUserLocation(locationObj);
         setSelectedLocation(locationObj);
       } catch (error) {

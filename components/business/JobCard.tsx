@@ -1,7 +1,7 @@
-import { formatCurrency, formatViews, timeAgo } from '@/constants/Utils';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { formatCurrency, formatViews, timeAgo } from "@/constants/Utils";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface JobCardProps {
   title: string;
@@ -13,6 +13,7 @@ interface JobCardProps {
   mode: string;
   views: number;
   createdAt: number;
+  onPress: () => void;
 }
 
 const JobCard = ({
@@ -25,20 +26,23 @@ const JobCard = ({
   mode,
   views,
   createdAt,
+  onPress,
 }: JobCardProps) => {
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const background = useThemeColor({}, 'background');
-  const border = useThemeColor({}, 'border');
-  const secondary = useThemeColor({}, 'secondary');
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const border = useThemeColor({}, "border");
+  const secondary = useThemeColor({}, "secondary");
 
   return (
-    <View
-      style={[
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
         styles.card,
         {
           borderColor: border,
           shadowColor: background,
+          opacity: pressed ? 0.9 : 1,
         },
       ]}
     >
@@ -49,7 +53,7 @@ const JobCard = ({
           </View>
           <View style={{ marginLeft: 12, flexShrink: 1 }}>
             <Text style={[styles.title, { color: text }]}>
-              {'to ' + title.toLowerCase()}
+              {"to " + title.toLowerCase()}
             </Text>
             <Text style={[styles.location, { color: secondary }]}>
               {lat} {lon}
@@ -68,19 +72,14 @@ const JobCard = ({
 
       <Text style={[styles.description, { color: secondary }]}>
         {description.length > 75
-          ? description.slice(0, 75).trim() + '...'
+          ? description.slice(0, 75).trim() + "..."
           : description}
       </Text>
 
       <View style={styles.tagContainer}>
-        <View
-          style={[
-            styles.tag,
-            { borderColor: border, backgroundColor: background },
-          ]}
-        >
+        <View style={[styles.tag]}>
           <MaterialCommunityIcons
-            name='eye-outline'
+            name="eye-outline"
             size={15}
             color={primary}
           />
@@ -89,26 +88,21 @@ const JobCard = ({
           </Text>
         </View>
 
-        <View
-          style={[
-            styles.tag,
-            { borderColor: border, backgroundColor: background },
-          ]}
-        >
-          {mode.toLowerCase() === 'onsite' ? (
+        <View style={[styles.tag]}>
+          {mode.toLowerCase() === "onsite" ? (
             <MaterialCommunityIcons
-              name='map-marker-outline'
+              name="map-marker-outline"
               size={15}
               color={primary}
             />
           ) : (
             <MaterialIcons
               name={
-                mode.toLowerCase() === 'remote'
-                  ? 'wifi'
-                  : mode.toLowerCase() === 'onsite'
-                  ? 'location-on'
-                  : 'public'
+                mode.toLowerCase() === "remote"
+                  ? "wifi"
+                  : mode.toLowerCase() === "onsite"
+                  ? "location-on"
+                  : "public"
               }
               size={15}
               color={primary}
@@ -118,18 +112,13 @@ const JobCard = ({
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
           </Text>
         </View>
-
-        <View
-          style={[
-            styles.tag,
-            { borderColor: border, backgroundColor: background },
-          ]}
-        >
-          <MaterialIcons name='schedule' size={15} color={primary} />
-          <Text style={[styles.tagText, { color: text }]}>{duration}</Text>
-        </View>
       </View>
-    </View>
+
+      <View style={[styles.tag]}>
+        <MaterialIcons name="schedule" size={15} color={primary} />
+        <Text style={[styles.tagText, { color: text }]}>{duration}</Text>
+      </View>
+    </Pressable>
   );
 };
 
@@ -146,72 +135,72 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 14,
   },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flexShrink: 1,
   },
   avatar: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   avatarText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 12,
     letterSpacing: 1,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
     marginBottom: 4,
+    fontFamily: "Montserrat_600SemiBold",
+    letterSpacing: -0.5,
   },
   location: {
     fontSize: 13,
+    fontFamily: "Montserrat_400Regular",
   },
   timeAgo: {
     fontSize: 12,
-    fontWeight: '500',
     minWidth: 30,
-    textAlign: 'right',
+    textAlign: "right",
     marginTop: 4,
+    fontFamily: "Montserrat_500Medium",
   },
   price: {
     fontSize: 18,
-    fontWeight: '700',
     marginBottom: 10,
+    fontFamily: "Montserrat_600SemiBold",
   },
   description: {
     fontSize: 13,
     lineHeight: 20,
     marginBottom: 4,
+    fontFamily: "Montserrat_400Regular",
   },
   tagContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 3,
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 15,
   },
   tag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 8,
-    paddingHorizontal: 12,
     paddingVertical: 5,
-    marginRight: 4,
     marginTop: 4,
   },
   tagText: {
     fontSize: 12,
     marginLeft: 6,
+    fontFamily: "Montserrat_500Medium",
   },
 });
 

@@ -41,13 +41,21 @@ export const timeAgo = (timestamp: number | string) => {
 export const formatCurrency = (
   amount: number | string,
   currency: string = "INR"
-) => {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currencyDisplay: "code",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(Number(amount));
+): string => {
+  const num = Number(amount);
+
+  let formatted = "";
+  if (num >= 1_00_00_000) {
+    formatted = `₹${(num / 1_00_00_000).toFixed(1)} Cr`;
+  } else if (num >= 1_00_000) {
+    formatted = `₹${(num / 1_00_000).toFixed(1)} L`;
+  } else if (num >= 1_000) {
+    formatted = `₹${(num / 1_000).toFixed(1)} K`;
+  } else {
+    formatted = `₹${num.toLocaleString("en-IN")}`;
+  }
+
+  return formatted;
 };
 
 export const formatAddress = (address: string): string => {

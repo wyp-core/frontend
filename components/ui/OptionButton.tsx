@@ -1,7 +1,7 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { MaterialIcons } from "@expo/vector-icons";
+import React from "react";
+import { Pressable, StyleSheet, Text } from "react-native";
 
 type Props<T> = {
   item: T;
@@ -18,10 +18,10 @@ export default function OptionButton<T>({
   iconName,
   displayFunction,
 }: Props<T>) {
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const border = useThemeColor({}, 'border');
-  const theme = useThemeColor({}, 'theme') as 'light' | 'dark';
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const border = useThemeColor({}, "border");
+  const theme = useThemeColor({}, "theme") as "light" | "dark";
 
   return (
     <Pressable
@@ -33,13 +33,13 @@ export default function OptionButton<T>({
     >
       {selected && (
         <MaterialIcons
-          name='check-circle'
+          name="check-circle"
           size={13}
           color={primary}
           style={[
             styles.checkIcon,
             {
-              backgroundColor: theme === 'dark' ? 'black' : 'white',
+              backgroundColor: theme === "dark" ? "black" : "white",
             },
           ]}
         />
@@ -60,26 +60,26 @@ export default function OptionButton<T>({
 const styles = StyleSheet.create({
   optionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 6,
     borderWidth: 1,
-    justifyContent: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    position: "relative",
   },
   optionText: {
     fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center',
+    fontFamily: "Montserrat_500Medium",
+    textAlign: "center",
   },
   icon: {
-    alignSelf: 'center',
+    alignSelf: "center",
     marginRight: 8,
   },
   checkIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: -5,
     top: -5,
     borderRadius: 50,

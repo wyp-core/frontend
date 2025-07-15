@@ -1,11 +1,11 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import React, { useEffect } from 'react';
-import { Animated, Easing, StyleSheet, View } from 'react-native';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React, { useEffect } from "react";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 
 const JobCardSkeleton = () => {
-  const background = useThemeColor({}, 'background');
-  const shimmerBase = useThemeColor({}, 'border');
-  const shimmerHighlight = useThemeColor({}, 'text');
+  const background = useThemeColor({}, "background");
+  const shimmerBase = useThemeColor({}, "border");
+  const shimmerHighlight = useThemeColor({}, "text");
 
   const shimmerValue = new Animated.Value(0);
 
@@ -22,7 +22,7 @@ const JobCardSkeleton = () => {
 
   const shimmerTranslate = shimmerValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['-100%', '100%'],
+    outputRange: ["-100%", "100%"],
   });
 
   return (
@@ -73,7 +73,7 @@ const JobCardSkeleton = () => {
       <View
         style={[
           styles.descriptionLine,
-          { width: '70%', backgroundColor: shimmerBase, opacity: 0.4 },
+          { width: "70%", backgroundColor: shimmerBase, opacity: 0.4 },
         ]}
       />
 
@@ -107,12 +107,12 @@ const styles = StyleSheet.create({
     padding: 16,
     marginVertical: 10,
     borderWidth: 0.75,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 14,
-    alignItems: 'center',
+    alignItems: "center",
   },
   avatar: {
     width: 42,
@@ -125,30 +125,30 @@ const styles = StyleSheet.create({
   },
   titleLine: {
     height: 14,
-    width: '60%',
+    width: "60%",
     borderRadius: 4,
     marginBottom: 6,
   },
   subLine: {
     height: 12,
-    width: '40%',
+    width: "40%",
     borderRadius: 4,
   },
   priceLine: {
     height: 16,
-    width: '30%',
+    width: "30%",
     borderRadius: 4,
     marginBottom: 10,
   },
   descriptionLine: {
     height: 10,
-    width: '90%',
+    width: "90%",
     borderRadius: 4,
     marginBottom: 6,
   },
   tags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginTop: 10,
     gap: 8,
   },
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   shimmerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    width: '100%',
+    width: "100%",
   },
 });
 

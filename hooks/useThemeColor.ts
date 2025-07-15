@@ -3,14 +3,14 @@
  * https://docs.expo.dev/guides/color-schemes/
  */
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from "@/constants/Colors";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof (typeof Colors)['light'] | 'theme'
+  colorName: keyof (typeof Colors)["light"] | "theme"
 ) {
-  const theme = 'dark';
-  if (colorName === 'theme') {
+  const theme = "light";
+  if (colorName === "theme") {
     return theme;
   }
 

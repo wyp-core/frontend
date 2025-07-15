@@ -1,67 +1,110 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { requestOTP, verifyOTP } from "@/api/user";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function OTPScreen() {
   const { number, countryCode } = useLocalSearchParams();
   const router = useRouter();
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [error, setError] = useState('');
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
   const [timer, setTimer] = useState(30);
-  const [resendEnabled, setResendEnabled] = useState(false);
-  const otpRefs = useRef<Array<TextInput | null>>([]);
+  const [loading, setLoading] = useState(false);
+  const hiddenInputRef = useRef<TextInput | null>(null);
 
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const border = useThemeColor({}, 'border');
-  const secondary = useThemeColor({}, 'secondary');
-  const errorColor = useThemeColor({}, 'error');
-  const background = useThemeColor({}, 'background');
-  const theme = useThemeColor({}, 'theme');
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const border = useThemeColor({}, "border");
+  const secondary = useThemeColor({}, "secondary");
+  const errorColor = useThemeColor({}, "error");
 
-  useEffect(() => {
-    const initializeResendAttempts = async () => {
-      const key = `resendAttempts_${countryCode}${number}`;
-      const storedTimestamp = await AsyncStorage.getItem(`${key}_timestamp`);
-      const currentTime = Date.now();
-
-      if (storedTimestamp) {
-        const elapsedTime = currentTime - parseInt(storedTimestamp, 10);
-
-        if (elapsedTime >= 3600000) {
-          await AsyncStorage.setItem(key, '0');
-        }
-      }
-    };
-
-    initializeResendAttempts();
-  }, [countryCode, number]);
+  // Animation Refs
+  const headingAnim = useRef(new Animated.Value(0)).current;
+  const subHeadingAnim = useRef(new Animated.Value(0)).current;
+  const inputAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    Animated.stagger(100, [
+      Animated.timing(headingAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(subHeadingAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(inputAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const createTranslateStyle = (anim: Animated.Value) => ({
+    transform: [
+      {
+        translateY: anim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [20, 0],
+        }),
+      },
+    ],
+    opacity: anim,
+  });
+
+  useEffect(() => {
+    let interval: number;
     if (timer > 0) {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         setTimer((prev) => prev - 1);
       }, 1000);
-      return () => clearInterval(interval);
-    } else {
-      setResendEnabled(true);
     }
+    return () => clearInterval(interval);
   }, [timer]);
 
-  const handleVerify = () => {
-    if (otp.join('').length !== 6) {
-      setError('Please enter a complete OTP');
-    } else {
-      setError('');
+  const handleVerify = async (otp: string) => {
+    if (otp.length !== 4) return;
 
-      const otpValue = otp.join('');
-      if (otpValue === '123456') {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await verifyOTP({
+        phone: number as string,
+        countryCode: countryCode as string,
+        otp: Number(otp) as number,
+      });
+
+      if (res?.status === 200 && res.data.data === "matched") {
         router.push({
-          pathname: '/auth/UserDetailsScreen',
+          pathname: "/auth/UserDetailsScreen",
+          params: {
+            number: number,
+            countryCode: countryCode,
+            status: "VERIFIED",
+          },
         });
+      } else {
+        setError("Incorrect OTP");
       }
+    } catch (error: any) {
+      setError(error.message || "Maximum attempts reached");
+      console.error("Verify OTP error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,129 +112,135 @@ export default function OTPScreen() {
     router.back();
   };
 
-  const handleOtpChange = (value: string, index: number) => {
-    const newOtp = [...otp];
-    const sanitizedValue = value.replace(/[^0-9]/g, '').slice(0, 1);
+  const handleOtpChange = (value: string) => {
+    const clean = value.replace(/[^0-9]/g, "").slice(0, 4);
+    setOtp(clean);
+    setError("");
+    if (clean.length === 4) {
+      handleVerify(clean);
+    }
+  };
 
-    if (sanitizedValue) {
-      newOtp[index] = sanitizedValue;
-      setOtp(newOtp);
+  const handleResendOtp = async () => {
+    setOtp("");
+    setTimer(30);
+    setError("");
 
-      if (index < 5) {
-        otpRefs.current[index + 1]?.focus();
+    try {
+      const res = await requestOTP({
+        phone: number as string,
+        countryCode: countryCode as string,
+      });
+
+      if (res?.status !== 200) {
+        setError(res?.error || "Failed to resend OTP");
       }
-    } else {
-      newOtp[index] = '';
-      setOtp(newOtp);
+    } catch (error: any) {
+      setError(error.message || "Failed to resend OTP");
+      console.error("Resend OTP error:", error);
     }
   };
 
-  const handleKeyPress = (event: any, index: number) => {
-    if (event.nativeEvent.key === 'Backspace') {
-      if (otp[index] === '' && index > 0) {
-        otpRefs.current[index - 1]?.focus();
-        const newOtp = [...otp];
-        newOtp[index - 1] = '';
-        setOtp(newOtp);
-      } else if (index > 0) {
-        const newOtp = [...otp];
-        newOtp[index - 1] = otp[index];
-        newOtp[index] = '';
-        setOtp(newOtp);
-      }
-    }
+  const focusHiddenInput = () => {
+    hiddenInputRef.current?.focus();
   };
-
-  const handleResend = async () => {
-    const key = `resendAttempts_${countryCode}${number}`;
-    const currentTime = Date.now();
-    const storedAttempts = await AsyncStorage.getItem(key);
-    const resendAttempts = storedAttempts ? parseInt(storedAttempts, 10) : 0;
-
-    if (resendAttempts < 3) {
-      let nextTimer = 30;
-      if (resendAttempts === 1) nextTimer = 60;
-      if (resendAttempts === 2) nextTimer = 300;
-
-      setTimer(nextTimer);
-      setResendEnabled(false);
-
-      await AsyncStorage.setItem(key, (resendAttempts + 1).toString());
-      await AsyncStorage.setItem(`${key}_timestamp`, currentTime.toString());
-    } else {
-      setError(
-        'You have reached the maximum resend attempts. Please try again after 1 hour.'
-      );
-    }
-  };
-
-  const otpCode = otp.reduce((acc, digit) => acc + digit, '');
 
   return (
-    <View style={[styles.container]}>
-      <Text style={[styles.title, { color: primary }]}>Enter OTP</Text>
+    <View style={styles.container}>
+      <Animated.Text
+        style={[
+          styles.title,
+          { color: primary },
+          createTranslateStyle(headingAnim),
+        ]}
+      >
+        Enter OTP
+      </Animated.Text>
 
-      <View style={styles.verificationMessageContainer}>
+      <Animated.View
+        style={[
+          styles.verificationMessageContainer,
+          createTranslateStyle(subHeadingAnim),
+        ]}
+      >
         <Text style={[styles.subtitle, { color: secondary }]}>
           sent to {countryCode} {number}
         </Text>
         <Text
-          style={[
-            styles.changeMobile,
-            { color: primary, textDecorationColor: primary },
-          ]}
+          style={[styles.changeMobile, { color: primary }]}
           onPress={handleChange}
         >
           Change
         </Text>
-      </View>
+      </Animated.View>
 
-      <View style={styles.otpContainer}>
-        {otp.map((digit, index) => (
-          <TextInput
-            key={index}
-            ref={(ref) => (otpRefs.current[index] = ref)}
-            style={[styles.otpBox, { borderColor: border, color: text }]}
-            keyboardType='number-pad'
-            maxLength={1}
-            value={digit}
-            onChangeText={(value) => handleOtpChange(value, index)}
-            onKeyPress={(event) => handleKeyPress(event, index)}
-            selectionColor='green'
-          />
-        ))}
-      </View>
+      <Animated.View style={createTranslateStyle(inputAnim)}>
+        <TouchableOpacity onPress={focusHiddenInput} activeOpacity={1}>
+          <View style={styles.otpRow}>
+            <View style={styles.otpContainer}>
+              {[0, 1, 2, 3].map((index) => (
+                <Pressable
+                  key={index}
+                  onPress={focusHiddenInput}
+                  style={[
+                    styles.otpBox,
+                    {
+                      borderColor: otp.length >= index ? text : border,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.otpText, { color: text }]}>
+                    {otp[index] || ""}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            {loading && (
+              <ActivityIndicator
+                size="small"
+                color={primary}
+                style={{ marginLeft: 10 }}
+              />
+            )}
+          </View>
+          {error ? (
+            <Text style={[styles.errorText, { color: errorColor }]}>
+              {error}
+            </Text>
+          ) : null}
+        </TouchableOpacity>
 
-      {error ? (
-        <Text style={[styles.errorText, { color: errorColor }]}>{error}</Text>
-      ) : null}
+        <TextInput
+          ref={hiddenInputRef}
+          style={{ height: 0, width: 0, opacity: 0 }}
+          keyboardType="number-pad"
+          value={otp}
+          onChangeText={handleOtpChange}
+          autoFocus
+        />
 
-      <Pressable
-        style={[
-          styles.confirmButton,
-          {
-            backgroundColor: primary,
-            opacity: otpCode.length === 6 ? 1 : 0.8,
-          },
-        ]}
-        disabled={otpCode.length < 6}
-        onPress={handleVerify}
-      >
-        <Text style={styles.buttonText}>Confirm OTP</Text>
-      </Pressable>
-
-      {resendEnabled ? (
-        <Text
-          style={[styles.resendLink, { color: 'green' }]}
-          onPress={handleResend}
-        >
-          Resend OTP
-        </Text>
-      ) : (
-        <Text style={[styles.timerText, { color: secondary }]}>
-          Resend OTP in {timer}s
-        </Text>
-      )}
+        <View style={styles.resend}>
+          <Text style={[styles.timerText, { color: text }]}>
+            Didn't get the OTP?
+          </Text>
+          {timer > 0 ? (
+            <Text style={[styles.timerText, { color: secondary }]}>
+              Resend OTP in {timer}s
+            </Text>
+          ) : (
+            <Text
+              onPress={handleResendOtp}
+              style={[
+                styles.timerText,
+                styles.resendOtpText,
+                { color: primary },
+              ]}
+            >
+              Resend OTP
+            </Text>
+          )}
+        </View>
+      </Animated.View>
     </View>
   );
 }
@@ -204,58 +253,61 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: "Montserrat_700Bold",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
+    fontFamily: "Montserrat_400Regular",
     marginBottom: 16,
   },
-  otpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  otpBox: {
-    borderWidth: 1,
-    borderRadius: 6,
-    padding: 12,
-    textAlign: 'center',
-    fontSize: 18,
-    width: 45,
-    height: 45,
-  },
-  confirmButton: {
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
   verificationMessageContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 4,
     marginBottom: 16,
   },
   changeMobile: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
+    fontFamily: "Montserrat_500Medium",
+  },
+  otpRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  otpContainer: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  otpBox: {
+    width: 50,
+    height: 50,
+    borderWidth: 1.2,
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  otpText: {
+    fontSize: 18,
+    fontFamily: "Montserrat_600SemiBold",
   },
   errorText: {
+    marginTop: 8,
     fontSize: 12,
-    marginTop: 4,
     marginBottom: 8,
+    fontFamily: "Montserrat_400Regular",
   },
-  resendLink: {
-    textAlign: 'center',
-    marginTop: 16,
-    textDecorationLine: 'underline',
-    fontSize: 14,
+  resend: {
+    flexDirection: "row",
+    gap: 4,
+    alignItems: "center",
+    marginTop: 8,
   },
   timerText: {
-    textAlign: 'center',
-    marginTop: 16,
-    fontSize: 14,
+    fontSize: 12,
+    fontFamily: "Montserrat_500Medium",
+  },
+  resendOtpText: {
+    textDecorationLine: "underline",
+    fontFamily: "Montserrat_500Medium",
   },
 });

@@ -1,6 +1,6 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useEffect, useRef, useState } from 'react';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -8,8 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import Filters from './Filters';
+} from "react-native";
+import Filters from "./Filters";
 
 const ControlPanel = ({
   initialFilters,
@@ -18,29 +18,29 @@ const ControlPanel = ({
   initialFilters: any;
   onApply: (filters: any) => void;
 }) => {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const animatedValue = useRef(new Animated.Value(0)).current;
 
-  const primary = useThemeColor({}, 'primary');
-  const secondary = useThemeColor({}, 'secondary');
-  const text = useThemeColor({}, 'text');
-  const border = useThemeColor({}, 'border');
+  const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const text = useThemeColor({}, "text");
+  const border = useThemeColor({}, "border");
 
   const examples = [
-    'online math tutor',
-    'weekend househelp',
-    'dog walking gigs',
-    'homework help jobs',
-    'remote tax assistant',
-    'freelance developer',
-    'evening babysitter',
-    'local gardening work',
-    'fitness coach clients',
-    'part-time writer',
-    'moving help offers',
-    'mobile car mechanic',
+    "online math tutor",
+    "weekend househelp",
+    "dog walking gigs",
+    "homework help jobs",
+    "remote tax assistant",
+    "freelance developer",
+    "evening babysitter",
+    "local gardening work",
+    "fitness coach clients",
+    "part-time writer",
+    "moving help offers",
+    "mobile car mechanic",
   ];
 
   useEffect(() => {
@@ -70,15 +70,15 @@ const ControlPanel = ({
           <View style={styles.searchBox}>
             <TextInput
               style={[styles.input, { color: text }]}
-              placeholder=''
+              placeholder=""
               placeholderTextColor={secondary}
               value={search}
               onChangeText={setSearch}
             />
-            {search === '' && (
+            {search === "" && (
               <View style={styles.placeholderContainer}>
                 <Text style={[styles.placeholderStatic, { color: secondary }]}>
-                  Search for{' '}
+                  Search for{" "}
                 </Text>
                 <View style={styles.animatedTextWrapper}>
                   <Animated.Text
@@ -95,7 +95,7 @@ const ControlPanel = ({
                 </View>
               </View>
             )}
-            <MaterialIcons name='search' size={20} color={primary} />
+            <MaterialIcons name="search" size={20} color={primary} />
           </View>
         </View>
 
@@ -103,7 +103,7 @@ const ControlPanel = ({
           style={[styles.filterButton, { borderColor: border }]}
           onPress={() => setFilterModalVisible(true)}
         >
-          <MaterialIcons name='tune' size={20} color={primary} />
+          <MaterialIcons name="tune" size={20} color={primary} />
         </TouchableOpacity>
       </View>
 
@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   searchWrapper: {
     flex: 1,
@@ -135,42 +135,46 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 2,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative",
   },
   input: {
     flex: 1,
     fontSize: 14,
-    paddingVertical: 8,
+    paddingVertical: 6,
     marginRight: 8,
+    fontFamily: "Montserrat_400Regular",
   },
   placeholderContainer: {
-    position: 'absolute',
+    position: "absolute",
     left: 5,
     top: 8,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   placeholderStatic: {
-    fontSize: 14,
+    fontSize: 12.5,
+    fontFamily: "Montserrat_500Medium",
+    letterSpacing: 0.25,
   },
   animatedTextWrapper: {
     height: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   placeholderAnimated: {
-    fontSize: 14,
-    fontStyle: 'italic',
+    fontSize: 12.5,
+    fontFamily: "Montserrat_500Medium_Italic",
+    letterSpacing: 0.25,
   },
   filterButton: {
     marginLeft: 8,
     padding: 8,
     borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1.5,
   },
 });

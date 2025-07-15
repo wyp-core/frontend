@@ -1,13 +1,20 @@
-import DateSelector from '@/components/ui/DateSelector';
-import OptionButton from '@/components/ui/OptionButton';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useDefaultStyles } from 'react-native-ui-datepicker';
+import DateSelector from "@/components/ui/DateSelector";
+import OptionButton from "@/components/ui/OptionButton";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  ScrollView,
+} from "react-native";
 
-type Gender = 'Male' | 'Female' | 'Others';
+type Gender = "Male" | "Female" | "Others";
 type GenderOption = {
   label: Gender;
   icon: keyof typeof MaterialIcons.glyphMap;
@@ -20,87 +27,161 @@ type UserFormData = {
 
 export default function UserDetailsScreen() {
   const [formData, setFormData] = useState<UserFormData>({
-    name: '',
+    name: "",
     dob: null,
     gender: null,
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [error, setError] = useState('');
-  const defaultStyles = useDefaultStyles();
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const primary = useThemeColor({}, 'primary');
-  const text = useThemeColor({}, 'text');
-  const border = useThemeColor({}, 'border');
-  const secondary = useThemeColor({}, 'secondary');
-  const errorColor = useThemeColor({}, 'error');
-  const theme = useThemeColor({}, 'theme');
+  const primary = useThemeColor({}, "primary");
+  const text = useThemeColor({}, "text");
+  const border = useThemeColor({}, "border");
+  const secondary = useThemeColor({}, "secondary");
+  const errorColor = useThemeColor({}, "error");
 
   const genderOptions: GenderOption[] = [
-    { label: 'Male', icon: 'male' },
-    { label: 'Female', icon: 'female' },
-    { label: 'Others', icon: 'transgender' },
+    { label: "Male", icon: "male" },
+    { label: "Female", icon: "female" },
+    { label: "Others", icon: "transgender" },
   ];
+
+  // Animation refs
+  const titleAnim = useRef(new Animated.Value(0)).current;
+  const subtitleAnim = useRef(new Animated.Value(0)).current;
+  const nameInputAnim = useRef(new Animated.Value(0)).current;
+  const dobAnim = useRef(new Animated.Value(0)).current;
+  const genderAnim = useRef(new Animated.Value(0)).current;
+  const buttonAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(100, [
+      Animated.timing(titleAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(subtitleAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(nameInputAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(dobAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(genderAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const createTranslateStyle = (anim: Animated.Value) => ({
+    transform: [
+      {
+        translateY: anim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [20, 0],
+        }),
+      },
+    ],
+    opacity: anim,
+  });
 
   const handleSubmit = () => {
     if (formData.name && formData.dob && formData.gender) {
-      router.push({
-        pathname: '/(tabs)',
-      });
+      router.push({ pathname: "/(tabs)" });
     } else {
-      setError('Please fill all the fields');
+      setError("Please fill all the fields");
     }
   };
 
   const handleFormInputChange = (
-    field: 'name' | 'dob' | 'gender',
+    field: "name" | "dob" | "gender",
     value: string | Date
   ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-
-    setError('');
+    setError("");
   };
 
   return (
-    <View style={[styles.container]}>
-      <Text style={[styles.title, { color: primary }]}>
+    <ScrollView contentContainerStyle={styles.scroll}>
+      <Animated.Text
+        style={[
+          styles.title,
+          { color: primary },
+          createTranslateStyle(titleAnim),
+        ]}
+      >
         Complete Your Profile
-      </Text>
-      <Text style={[styles.subtitle, { color: secondary }]}>
+      </Animated.Text>
+
+      <Animated.Text
+        style={[
+          styles.subtitle,
+          { color: secondary },
+          createTranslateStyle(subtitleAnim),
+        ]}
+      >
         Well done. You have successfully registered. Now, please complete your
         profile.
-      </Text>
+      </Animated.Text>
 
-      <View style={[styles.inputContainer, { borderColor: border }]}>
-        <TextInput
-          style={[styles.input, { color: text }]}
-          placeholder='Enter Name'
-          placeholderTextColor={secondary}
-          value={formData.name}
-          onChangeText={(value) => handleFormInputChange('name', value)}
-          cursorColor={primary}
-        />
-      </View>
-
-      <Pressable
+      <Animated.View
         style={[
           styles.inputContainer,
-          {
-            borderColor: border,
-            paddingLeft: 18,
-          },
+          { borderColor: border },
+          createTranslateStyle(nameInputAnim),
         ]}
-        onPress={() => setShowDatePicker(true)}
       >
-        <Text style={{ color: formData.dob ? text : secondary, fontSize: 14 }}>
-          {formData.dob
-            ? new Date(formData.dob).toLocaleDateString()
-            : 'Select Date of Birth'}
-        </Text>
-      </Pressable>
+        <TextInput
+          style={[styles.input, { color: text }]}
+          placeholder="Enter Name"
+          placeholderTextColor={secondary}
+          value={formData.name}
+          onChangeText={(value) => handleFormInputChange("name", value)}
+          cursorColor={primary}
+        />
+      </Animated.View>
+
+      <Animated.View
+        style={[
+          styles.inputContainer,
+          { borderColor: border, paddingLeft: 18 },
+          createTranslateStyle(dobAnim),
+        ]}
+      >
+        <Pressable onPress={() => setShowDatePicker(true)} style={{ flex: 1 }}>
+          <Text
+            style={{
+              color: formData.dob ? text : secondary,
+              fontSize: 14,
+              fontFamily: "Montserrat_400Regular",
+            }}
+          >
+            {formData.dob
+              ? new Date(formData.dob).toLocaleDateString()
+              : "Select Date of Birth"}
+          </Text>
+        </Pressable>
+      </Animated.View>
 
       <DateSelector
         value={
@@ -109,60 +190,64 @@ export default function UserDetailsScreen() {
         maxDate={new Date().setFullYear(new Date().getFullYear() - 18)}
         minDate={new Date().setFullYear(new Date().getFullYear() - 100)}
         onDateChange={(date: Date) => {
-          console.log(date);
-          handleFormInputChange('dob', date);
+          handleFormInputChange("dob", date);
           setShowDatePicker(false);
         }}
         onClose={() => setShowDatePicker(false)}
         visible={showDatePicker}
       />
 
-      <View style={[styles.genderContainer, { borderColor: border }]}>
+      <Animated.View
+        style={[
+          styles.genderContainer,
+          { borderColor: border },
+          createTranslateStyle(genderAnim),
+        ]}
+      >
         {genderOptions.map(({ label, icon }) => (
           <OptionButton
             key={label}
             item={label}
             selected={formData.gender === label}
             iconName={icon}
-            onPress={(val) => handleFormInputChange('gender', val)}
+            onPress={(val) => handleFormInputChange("gender", val)}
           />
         ))}
-      </View>
+      </Animated.View>
 
-      <View>
-        {error && (
-          <Text style={[styles.errorText, { color: errorColor }]}>{error}</Text>
-        )}
-      </View>
+      {error && (
+        <Text style={[styles.errorText, { color: errorColor }]}>{error}</Text>
+      )}
 
-      <Pressable
-        style={[styles.button, { backgroundColor: primary }]}
-        onPress={handleSubmit}
-      >
-        <Text style={[styles.buttonText, { color: '#fff' }]}>Submit</Text>
-      </Pressable>
-    </View>
+      <Animated.View style={createTranslateStyle(buttonAnim)}>
+        <Pressable
+          style={[styles.button, { backgroundColor: primary }]}
+          onPress={handleSubmit}
+        >
+          <Text style={[styles.buttonText, { color: "#fff" }]}>Submit</Text>
+        </Pressable>
+      </Animated.View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scroll: {
     paddingHorizontal: 24,
     paddingTop: 100,
-    flexDirection: 'column',
     gap: 24,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: "Montserrat_700Bold",
   },
   subtitle: {
     fontSize: 14,
+    fontFamily: "Montserrat_400Regular",
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderRadius: 8,
     height: 45,
@@ -171,44 +256,27 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    fontFamily: "Montserrat_400Regular",
   },
   genderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderRadius: 8,
     gap: 12,
-  },
-  genderTab: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    borderRadius: 6,
-    borderWidth: 1,
-  },
-  genderText: {
-    marginLeft: 8,
-    fontSize: 14,
   },
   errorText: {
     fontSize: 12,
     paddingLeft: 4,
+    fontFamily: "Montserrat_400Regular",
   },
   button: {
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    fontWeight: 'bold',
     fontSize: 14,
+    fontFamily: "Montserrat_700Bold",
   },
 });
