@@ -11,6 +11,7 @@ type LocationContextType = {
   userLocation: LocationType | null;
   selectedLocation: LocationType | null;
   setSelectedLocation: (loc: LocationType) => void;
+  setUserLocation: (loc: LocationType) => void;
   loading: boolean;
 };
 
@@ -18,6 +19,7 @@ const LocationContext = createContext<LocationContextType>({
   userLocation: null,
   selectedLocation: null,
   setSelectedLocation: () => {},
+  setUserLocation: () => {},
   loading: true,
 });
 
@@ -81,6 +83,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
         userLocation,
         selectedLocation,
         setSelectedLocation,
+        setUserLocation,
         loading,
       }}
     >

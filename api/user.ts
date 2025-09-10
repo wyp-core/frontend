@@ -1,9 +1,11 @@
 import { OTPRequestPayload, VerifyOTPPayload } from "@/types/user";
 import axios from "axios";
 
-const baseURL = process.env.API_BASE_URL || "http://192.168.1.13:8000/v1";
+const baseURL = process.env.API_BASE_URL || "http://10.0.2.2:8000/v1";
 
 export const requestOTP = async (data: OTPRequestPayload) => {
+  console.log(`${baseURL}/otp/send`);
+
   if (!baseURL) {
     throw new Error("API_BASE_URL is not defined.");
   }

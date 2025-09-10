@@ -23,13 +23,18 @@ const GOOGLE_API_KEY = "AIzaSyC2wgrkz7bXl48td2VZXQVdTrc0-QPu-XI";
 interface GeolocationProps {
   visible: boolean;
   onClose: () => void;
+  global: boolean | null;
 }
 
-const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
+const Geolocation: React.FC<GeolocationProps> = ({
+  visible,
+  onClose,
+  global,
+}) => {
   const [query, setQuery] = useState("");
   const [predictions, setPredictions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const { userLocation, setSelectedLocation } = useLocation();
+  const { userLocation, setSelectedLocation, setUserLocation } = useLocation();
 
   const primary = useThemeColor({}, "primary");
   const text = useThemeColor({}, "text");
@@ -41,7 +46,7 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
     if (query.length > 2) {
       const delayDebounce = setTimeout(() => {
         fetchPredictions(query);
-      }, 500);
+      }, 200);
       return () => clearTimeout(delayDebounce);
     } else {
       setPredictions([]);
@@ -112,11 +117,20 @@ const Geolocation: React.FC<GeolocationProps> = ({ visible, onClose }) => {
   };
 
   const handleSelectPrediction = (item: any) => {
-    setSelectedLocation({
-      lat: item.location.lat,
-      lon: item.location.lon,
-      address: item.address || item.description,
-    });
+    if (global) {
+      setUserLocation({
+        lat: item.location.lat,
+        lon: item.location.lon,
+        address: item.address || item.description,
+      });
+    } else {
+      setSelectedLocation({
+        lat: item.location.lat,
+        lon: item.location.lon,
+        address: item.address || item.description,
+      });
+    }
+
     handleClose();
   };
 

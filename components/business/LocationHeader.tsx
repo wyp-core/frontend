@@ -33,6 +33,7 @@ const LocationHeader: React.FC = () => {
       <Geolocation
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
+        global={true}
       />
     </View>
   );

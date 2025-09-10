@@ -18,7 +18,7 @@ import {
 
 const LoginScreen = () => {
   const [mobileNumber, setMobileNumber] = useState({
-    countryCode: "+91",
+    countryCode: "91",
     number: "",
   });
   const [error, setError] = useState("");
@@ -102,7 +102,7 @@ const LoginScreen = () => {
                   { borderColor: border, color: text },
                 ]}
               >
-                {mobileNumber.countryCode}
+                +{mobileNumber.countryCode}
               </Text>
               <View
                 style={[styles.mobileInputContainer, { borderColor: border }]}
